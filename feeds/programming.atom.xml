@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Some Personal Notes</title><link href="https://black-puppydog.github.io/" rel="alternate"></link><link href="https://black-puppydog.github.io/feeds/programming.atom.xml" rel="self"></link><id>https://black-puppydog.github.io/</id><updated>2015-02-04T00:00:00+01:00</updated><entry><title>The Distributed Hash Table: Twister's Second Layer</title><link href="https://black-puppydog.github.io/twister-dht.html" rel="alternate"></link><updated>2015-02-04T00:00:00+01:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-02-04:twister-dht.html</id><summary type="html">&lt;p&gt;When reading about twister, the three layer model often comes up.
+It roughly goes like this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Blockchain for identity&lt;/li&gt;
+&lt;li&gt;DHT for mutable information&lt;/li&gt;
+&lt;li&gt;Torrent for write-only content&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;In this post, I am going to look at the second layer because the Distributed Hash Table (DHT) is a fascinating invention and because people (including me) tend to have trouble wrapping their head around how it works.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;As with my last post, I am learning about these things myself at the moment.
+So if you find things that are unclear, incomplete or plain wrong, please tell me!&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;First let us be clear what the task of the DHT is.
+&lt;strong&gt;What does and does not go into the DHT?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The DHT primarily holds &lt;em&gt;mutable&lt;/em&gt; information such as user profiles, avatars as well as collaborative information such as mentions and hashtags.
+While at this point it also stores most of twister's posts, this is not why it is needed. 
+The torrent layer could (and does) handle the storing of posts as well, the use of the DHT for them is just a performance enhancement.
+On the other side of "layer 2" lies the block chain which holds the "slow-moving" identity management.
+The block chain manages who can use which username to post by associating a &lt;a href="https://www.youtube.com/watch?v=wXB-V_Keiu8"&gt;public key&lt;/a&gt; with each username. 
+My &lt;a href="https://black-puppydog.withknown.com/2015/a-quick-note-on-twisters-blocks"&gt;previous post&lt;/a&gt; about the blocks shows some examples.&lt;/p&gt;
+&lt;h2&gt;The Regular Hash Table&lt;/h2&gt;
+&lt;p&gt;Unsurprisingly, the "distributed hash table" is just a distributed version of a "hash table", a common data structure for storing and looking up data.&lt;/p&gt;
+&lt;p&gt;You can store any &lt;em&gt;value&lt;/em&gt; in a hash table using a &lt;em&gt;key&lt;/em&gt;, and later you can retrieve it using the same key again.
+For this to work, it &lt;em&gt;hashes&lt;/em&gt; the key with a &lt;em&gt;hash function&lt;/em&gt;, which is really just to say we derive some number from the key by which we can sort the keys.
+This number does not even have to be unique.
+Of course, if the key is already a number that is quite simple.&lt;/p&gt;
+&lt;p&gt;So fundamentally, a hash table has just two operations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;put(key, value)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;value = get(key)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Example: Address Book&lt;/h3&gt;
+&lt;p&gt;An address book is a really simple hash table.
+Assuming you order your address book by last names...&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The key of an entry is the person's last name.&lt;/li&gt;
+&lt;li&gt;The value of an entry is the contact information like phone number, email etc, so basically a long string.&lt;/li&gt;
+&lt;li&gt;The hash function is just "Given a family name, only look at its first letter".&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Say you want to store (i.e. add) a new contact. Say you want to add me, Daan Wynen, to your address book.
+You run my family name through the hash function, which lets you directly skip ahead to the "W" page where you then just add me to the bottom of the "W" list.
+You don't bother to sort that list, because there are only a handful of people there anyway.&lt;/p&gt;
+&lt;p&gt;Now, when you want to look me up, you start the same way: look at my family name, see that it starts with "W", skip ahead to the "W" page.
+Then you just run your finger down the list until you find me and you're done.
+Much faster than keeping all contacts in one big list.&lt;/p&gt;
+&lt;h2&gt;What Twister Stores in the DHT&lt;/h2&gt;
+&lt;p&gt;I already said that the DHT stores things like profiles and hashtags.
+But what does that really mean?
+Well, as many things web, twister's data is really just a bunch of &lt;a href="https://en.wikipedia.org/wiki/JSON"&gt;json&lt;/a&gt; documents.
+&lt;code&gt;twisterd&lt;/code&gt; allows us to store and retrieve these using the &lt;code&gt;dhtget&lt;/code&gt; and &lt;code&gt;dhtput&lt;/code&gt; commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd &lt;span class="nb"&gt;help &lt;/span&gt;dhtget
+dhtget &amp;lt;username&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;s&lt;span class="o"&gt;(&lt;/span&gt;ingle&lt;span class="o"&gt;)&lt;/span&gt;/m&lt;span class="o"&gt;(&lt;/span&gt;ulti&lt;span class="o"&gt;)&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;[&lt;/span&gt;timeout_ms&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;timeout_multi_ms&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;min_multi&lt;span class="o"&gt;]&lt;/span&gt;
+
+&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd &lt;span class="nb"&gt;help &lt;/span&gt;dhtput
+dhtput &amp;lt;username&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;s&lt;span class="o"&gt;(&lt;/span&gt;ingle&lt;span class="o"&gt;)&lt;/span&gt;/m&lt;span class="o"&gt;(&lt;/span&gt;ulti&lt;span class="o"&gt;)&lt;/span&gt;&amp;gt; &amp;lt;value&amp;gt; &amp;lt;sig_user&amp;gt; &amp;lt;seq&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here is an example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd dhtget black_puppydog profile s
+&lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;p&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="s2"&gt;&amp;quot;height&amp;quot;&lt;/span&gt; : 63503,
+            &lt;span class="s2"&gt;&amp;quot;seq&amp;quot;&lt;/span&gt; : 31,
+            &lt;span class="s2"&gt;&amp;quot;target&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;n&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;black_puppydog&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;r&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;profile&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;t&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;s&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;time&amp;quot;&lt;/span&gt; : 1417107655,
+            &lt;span class="s2"&gt;&amp;quot;v&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;bio&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Hangs out here for the self-selecting group of people to follow.&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;fullname&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Daan Wynen&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;location&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Grenoble, France&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;tox&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;52166FAEB07E85551AE5C567CB37C16B31FC9F6DDCF64D2DAC7A13D426DAB976224A9A737A3C&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;url&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;http://black-puppydog.withknown.com/&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;sig_p&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;20fc80066bf07eb708d9ced08958de863f42351e60495046bced9a05afab698a9abacb7208cfc0d31635edb4357be93a1820e80ba40396226628ce6deb07dc57af&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;sig_user&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;black_puppydog&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The actual profile is held in the &lt;strong&gt;&lt;code&gt;v&lt;/code&gt;&lt;/strong&gt; field: Name, location and whatever else information the user has added.
+The rest is bureaucracy:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;height&lt;/code&gt;&lt;/strong&gt; is the number of the newest block when this value was stored in the DHT.
+This, together with the &lt;strong&gt;&lt;code&gt;time&lt;/code&gt;&lt;/strong&gt; (which is a UNIX timestamp) establishes that I changed my profile at 2014-11-27T17:00:55 UTC.
+&lt;strong&gt;&lt;code&gt;seq&lt;/code&gt;&lt;/strong&gt; increments every time this entry is changed. 
+These three can be used to keep the DHT consistent: if some node has been disconnected for a few months and suddenly starts handing out outdated info, other nodes can simply discard it as such.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;&lt;code&gt;target&lt;/code&gt;&lt;/strong&gt; element holds the key of the entry; &lt;em&gt;name&lt;/em&gt;, &lt;em&gt;resource&lt;/em&gt; and &lt;em&gt;type&lt;/em&gt;.
+These are the ones we have to provide to &lt;code&gt;twisterd&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;username&lt;/code&gt; argument is also (ab)used for hashtags, which can be retrieved like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd dhtget twister hashtag m &lt;span class="m"&gt;500&lt;/span&gt; &lt;span class="m"&gt;500&lt;/span&gt; 10
+&lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;p&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="s2"&gt;&amp;quot;height&amp;quot;&lt;/span&gt; : 72459,
+            &lt;span class="s2"&gt;&amp;quot;target&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;n&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;twister&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;r&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;hashtag&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;t&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;m&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;time&amp;quot;&lt;/span&gt; : 1423000508,
+            &lt;span class="s2"&gt;&amp;quot;v&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;sig_userpost&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;1fd080fe37fd0c4a250005eebad68196ae62aa647ab0e3533bef7af87a5a8c3c2944ec7184bfb92dd18c439eaa4aefa3baf861a917f9c62006968c715fdd0bb292&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;userpost&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                    &lt;span class="s2"&gt;&amp;quot;height&amp;quot;&lt;/span&gt; : 72459,
+                    &lt;span class="s2"&gt;&amp;quot;k&amp;quot;&lt;/span&gt; : 519,
+                    &lt;span class="s2"&gt;&amp;quot;lastk&amp;quot;&lt;/span&gt; : 518,
+                    &lt;span class="s2"&gt;&amp;quot;msg&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;With the new Raspberry Pi 2 now running a #Bitcoin or #Twister Node is easily doable.  Only &lt;/span&gt;&lt;span class="nv"&gt;$50&lt;/span&gt;&lt;span class="s2"&gt; for a Twister node. &lt;/span&gt;&lt;span class="nv"&gt;$75&lt;/span&gt;&lt;span class="s2"&gt; for a BTC node&amp;quot;&lt;/span&gt;,
+                    &lt;span class="s2"&gt;&amp;quot;n&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;avatarx&amp;quot;&lt;/span&gt;,
+                    &lt;span class="s2"&gt;&amp;quot;time&amp;quot;&lt;/span&gt; : 1423000508
+                &lt;span class="o"&gt;}&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;sig_p&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;1f3a3bf0b704085e77918f8a7c9304c1002fd277cbbc39aad5899ff007277d761eb60be7b87d316aefb8685a109336bed41918b3dddedee897aeb10f2418228618&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;sig_user&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;avatarx&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;strong&gt;&lt;code&gt;s(ingle)/m(ulti)&lt;/code&gt;&lt;/strong&gt; argument tells &lt;code&gt;twisterd&lt;/code&gt; if there is one unique value stored for this key or if multiple values can be stored in the DHT.
+For hashtags, obviously any user should be able to store an entry, and we mostly want to retrieve more than one entry for a hashtag.
+A profile on the other hand is unique to a user and thus only has one entry.&lt;/p&gt;
+&lt;p&gt;Last but not least, the &lt;strong&gt;&lt;code&gt;sig_p&lt;/code&gt;&lt;/strong&gt; and &lt;strong&gt;&lt;code&gt;sig_user&lt;/code&gt;&lt;/strong&gt; let us verify that this entry was created by a certain user using the public key stored in the block chain.&lt;/p&gt;
+&lt;p&gt;Similarly, if I want to update my profile to show off my brand-new pelican-powered blag, and I am even too smug to use the HTML interface, I can do so like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ profile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{&lt;/span&gt;
+&lt;span class="s1"&gt;    &amp;quot;bio&amp;quot; : &amp;quot;Hangs out here for the self-selecting group of people to follow.&amp;quot;,&lt;/span&gt;
+&lt;span class="s1"&gt;    &amp;quot;fullname&amp;quot; : &amp;quot;Daan Wynen&amp;quot;,&lt;/span&gt;
+&lt;span class="s1"&gt;    &amp;quot;location&amp;quot; : &amp;quot;Grenoble, France&amp;quot;,&lt;/span&gt;
+&lt;span class="s1"&gt;    &amp;quot;tox&amp;quot; : &amp;quot;52166FAEB07E85551AE5C567CB37C16B31FC9F6DDCF64D2DAC7A13D426DAB976224A9A737A3C&amp;quot;,&lt;/span&gt;
+&lt;span class="s1"&gt;    &amp;quot;url&amp;quot; : &amp;quot;http://black-puppydog.github.io&amp;quot;&lt;/span&gt;
+&lt;span class="s1"&gt;}&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd dhtput black_puppydog profile s &lt;span class="nv"&gt;$profile&lt;/span&gt; black_puppydog 33
+&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd dhtget black_puppydog profile s
+&lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;p&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="s2"&gt;&amp;quot;height&amp;quot;&lt;/span&gt; : 72461,
+            &lt;span class="s2"&gt;&amp;quot;seq&amp;quot;&lt;/span&gt; : 33,
+            &lt;span class="s2"&gt;&amp;quot;target&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;n&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;black_puppydog&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;r&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;profile&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;t&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;s&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;time&amp;quot;&lt;/span&gt; : 1423003589,
+            &lt;span class="s2"&gt;&amp;quot;v&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;bio&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Hangs out here for the self-selecting group of people to follow.&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;fullname&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Daan Wynen&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;location&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Grenoble, France&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;tox&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;52166FAEB07E85551AE5C567CB37C16B31FC9F6DDCF64D2DAC7A13D426DAB976224A9A737A3C&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;url&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;http://black-puppydog.github.io&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;sig_p&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;1f0c58b58cb01b2819f375510eb9e851522e816891ad88772a2151691dfb410c4e1900594b35e45eaba590faff6c5b50ffcc53e258dd0a9809556f5779e3020d87&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;sig_user&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;black_puppydog&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And sure enought, the new website also shows up in the HTML:
+&lt;img alt="Yay, now everyone can marvel at my ramblings!" src="https://black-puppydog.github.io/images/2015-02-04_my_profile.png" /&gt;&lt;/p&gt;
+&lt;p&gt;This is not too surprising since the HTML/JavaScript interface makes the exact same calls to the &lt;code&gt;twisterd&lt;/code&gt; running as server as does &lt;code&gt;twisterd&lt;/code&gt; itself when called with the &lt;code&gt;dhtget&lt;/code&gt; command.&lt;/p&gt;
+&lt;h2&gt;How the DHT Stores And Retrieves Data&lt;/h2&gt;
+&lt;p&gt;The DHT was made popular by file sharing networks like BitTorrent.
+If you have used BitTorrent's &lt;a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme"&gt;magnet links&lt;/a&gt; you have used a DHT to retrieve a .torrent file.
+Back in the day, these .torrent files had to be hosted somewhere and you would have to download them before you could get that movie or .iso or whatever.
+Now, with the DHT network, you just get the magnet link, which is a hash of the .torrent file. 
+With this hash you then retrieve the file itself, so the hash of the file itself acts as the key to the file in the hash table.
+Since the hash is long this key is assumed to be unique, an assumption that seems &lt;a href="https://crypto.stackexchange.com/questions/418/is-the-number-of-creatable-torrents-limited"&gt;reasonable enough&lt;/a&gt; given the numbers involved.&lt;/p&gt;
+&lt;p&gt;For twister, the situation is similar: the three inputs &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;resource&lt;/code&gt; and one bit for &lt;code&gt;m&lt;/code&gt;/&lt;code&gt;s&lt;/code&gt; are made into a joint sha1 hash that then gets used as the key.&lt;/p&gt;
+&lt;p&gt;First, when storing a key/value pair in the DHT, the question is which node(s) should store it.
+Some naive strategies come to mind here:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;every node stores every key/value pair&lt;/li&gt;
+&lt;li&gt;only one random node stores every key/value pair&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Obviously, these strategies are not very suitable to the task, but using them as examples we can clearly see what we would like the Best Strategy™ to look like.&lt;/p&gt;
+&lt;p&gt;If every node stores every entry, then looking up an entry is always fast, since it is already present on the node performing the search. We like that. 
+But that would require that every node store every entry, which can be a lot of data.
+And if an entry gets updated on one node, that change would have to propagate through the network, and until it would, other nodes would receive the old value when searching for the key. 
+We don't like that...&lt;/p&gt;
+&lt;p&gt;On the other hand, if we store every pair on exactly one random node, then we save lots of storage space across the network, and also the bandwidth to send the data to every node!
+We like that.
+But then searching would take forever since we would have to ask &lt;em&gt;every&lt;/em&gt; node if they hold the pair for the key we're searching for.
+We don't like that for sure...&lt;/p&gt;
+&lt;p&gt;Obviously, twister does neither of those two.
+In fact, twister just uses the &lt;a href="https://en.wikipedia.org/wiki/Kademlia"&gt;Kademlia&lt;/a&gt; implementation of a DHT.
+Kademlia, like any decent DHT implementation, assigns a &lt;em&gt;node ID&lt;/em&gt; to every node in the network, so in twister's case every twisterd.&lt;/p&gt;
+&lt;p&gt;The important part about these IDs is that they can be regarded as being in the same &lt;em&gt;space&lt;/em&gt; as the keys used for storage and retrieval.
+One then defines a &lt;em&gt;distance function&lt;/em&gt; between keys and node IDs.
+The idea is that only nodes &lt;em&gt;close to an entry's key&lt;/em&gt; store its data.&lt;/p&gt;
+&lt;h3&gt;Example: 2D Key Space&lt;/h3&gt;
+&lt;p&gt;Imagine we would use a really simple distance function:
+The keys and node IDs are both 40 bits long. 
+We regard the first 20 bits as an x coordinate, and the second 20 bits as a y coordinate, and we divide both of them by 2^20 so all coordinates are in [0, 1].
+The distance between two points (x1, y1) and (x2, y2) is then simply the (euclidean) distance between those points.
+For example:
+&lt;img alt="Some nodes covering the 2D key space" src="https://black-puppydog.github.io/images/2015-02-04_voronoi_1.png" /&gt;
+Here the points &lt;em&gt;inside&lt;/em&gt; the polygons are the nodes and the areas around them are the regions of the key space they are responsible for.&lt;/p&gt;
+&lt;h3&gt;Retrieving Data&lt;/h3&gt;
+&lt;p&gt;When &lt;code&gt;twisterd&lt;/code&gt; has created the sha1 hash of the key it starts &lt;em&gt;routing&lt;/em&gt; towards a node that holds the corresponding data.
+For this, every node holds a &lt;em&gt;routing table&lt;/em&gt; of peers and their corresponding node IDs.
+These are the DHT peers you can see on twister's Network page.
+The lookup is an iterative process: on every iteration twisterd queries a node, starting with itself, for the given key.
+If the current node is not responsible for the key because its node ID is not close enough to the key then the node being queried looks into its own routing table to find another node &lt;em&gt;that is closer to the key than itself&lt;/em&gt;.
+So on every iteration twisterd queries a node that is closer to the key than the last one.
+If the node being queried holds the key (or the *should hold it but it simply doesn't exist) then the process finishes.&lt;/p&gt;
+&lt;h3&gt;Storing Data&lt;/h3&gt;
+&lt;p&gt;This is actually quite trivial. &lt;code&gt;twisterd&lt;/code&gt; could simply send the new key/value pair to any of its peers.
+Since the recipient could check if it is responsible for this key, it could decide whether to store it or to forward it to a node closer to the key.
+But Kademlia is a bit cleverer than that.
+Instead of relying on the forwarding mechanism it first finds a node close to the key, which is really just the same procedure as before for the look-up.
+It then sends the new data this node, sparing the network a lot of forwarding messages.&lt;/p&gt;
+&lt;h3&gt;Adding and Removing Nodes&lt;/h3&gt;
+&lt;p&gt;People go on- and offline all the time.
+For the DHT network that means that nodes suddenly appear and disappear.
+When a node appears, it is allocated a region of the key space that it is responsible for, based on its node ID.
+To stay with the simple example from above:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Some nodes covering the 2D key space" src="https://black-puppydog.github.io/images/2015-02-04_voronoi_2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;But what happens when a node disappears, maybe because the owner of the PC running this twister server is going to bed?
+To prevent the data on this node from simply disappearing, every key is stored not only on one node, but on several nodes, and when a node disappears these responsibilities are renegotiated, just as they are when a node appears:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Some nodes covering the 2D key space" src="https://black-puppydog.github.io/images/2015-02-04_voronoi_3.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;Summary&lt;/h2&gt;
+&lt;p&gt;Twister's DHT is a proven system for storing data in a decentralized manner.
+Through the use of signatures and the public keys stored in the block chain each user keeps control over their profile information and other data.
+And the principle behind the DHT is even quite simple to sum up:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If I cannot help you get what you want, I know a guy who can.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I hope I got across the point that DHTs are fascinating and useful. If you like this post, please tell me.
+If you think it sucked, please, tell me why!&lt;/p&gt;</summary><category term="DHT"></category><category term="twister"></category></entry><entry><title>A Note on Twister Transactions</title><link href="https://black-puppydog.github.io/twister-blocks.html" rel="alternate"></link><updated>2015-01-30T01:22:31+01:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-01-30:twister-blocks.html</id><summary type="html">&lt;p&gt;This is just a quick note about what the blockchain does and does not store.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I didn't write this software, and I am mostly trying to make sense of it myself at the moment.
+So if you find things that are unclear, incomplete or plain wrong, please tell me!&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The "what is not in the blockchain?" part is easy: anything that does not relate to user names, public keys, the spam messages or the blockchain itself lives &lt;em&gt;outside&lt;/em&gt; the blockchain.
+Profiles and twists are stored in a Distributed Hash Table (DHT) and the twists also in a torrent swarm.
+This is because storing all twists in the chain, although possible, would not scale.
+A block chain is relatively slow, and more importantly, all nodes of the network would have to download and store &lt;em&gt;all&lt;/em&gt; twists ever made.&lt;/p&gt;
+&lt;p&gt;So what does the chain store, concretely?
+You can find out by running some simple commands for your local twister daemon:&lt;/p&gt;
+&lt;p&gt;Let's get a random block from the chain:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd getblockhash  71772
+70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d
+
+&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd getblock  70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;hash&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;confirmations&amp;quot;&lt;/span&gt; : 38,
+    &lt;span class="s2"&gt;&amp;quot;size&amp;quot;&lt;/span&gt; : 361,
+    &lt;span class="s2"&gt;&amp;quot;height&amp;quot;&lt;/span&gt; : 71772,
+    &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt; : 2,
+    &lt;span class="s2"&gt;&amp;quot;merkleroot&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;ba8dd4de438b296fe16f619f16a988700f1161fbba3fefadef7df14964823c7b&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;tx&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;1cd83cd3c6d4bc41099cc57bf592f2ce91470d09f364b5dda49c828474e2bcb9&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;0000001ba539c9045a906a8efe4b1fdbe916b925098cc58be422060e987df636&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;spamMessage&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;spamUser&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;brunus&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;userhashes&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;6756f780590a51b6857104268c58c331b432b3d17290dbabd496c7f95c1033b0&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;usernames&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;kwofu&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;time&amp;quot;&lt;/span&gt; : 1422554853,
+    &lt;span class="s2"&gt;&amp;quot;nonce&amp;quot;&lt;/span&gt; : 4700834,
+    &lt;span class="s2"&gt;&amp;quot;bits&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;1d429ed8&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;difficulty&amp;quot;&lt;/span&gt; : 0.01501017,
+    &lt;span class="s2"&gt;&amp;quot;previousblockhash&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;6d36ace676ce6a8e600f31fa743eef7e96110c3713d9736f138cd864a9fa7c88&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;nextblockhash&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;8da5a51cf66ee39e0fb98dd5b137a19ec143d80e085083317c96e4ff36e8d149&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This is a human-readable representation of a block as it is stored in the blockchain.
+The non-readable version is this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd getblock  70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d &lt;span class="nb"&gt;false&lt;/span&gt;
+
+020000005c180100887cfaa964d88c136f73d913370c11967eef3e74fa310f608e6ace76e6ac366d7b3c826449f17defadef3fbafb61110f7088a9169f616fe16f298b43ded48dbae576ca54d89e421da2ba470002010000007f4c7d50726f6d6f74656420706f73747320617265206e656564656420746f2072756e20746865206e6574776f726b20696e6672617374727563747572652e20496620796f752077616e7420746f2068656c702c2073746172742067656e65726174696e6720626c6f636b7320616e64206164766572746973652e205b656e5d4e066272756e7573411fe3902beb204364ffc5d89c6fec2bed2a13c6debeec22893fb088431dc426c8e164f42035c93c6de03b20f96cf86dfb0676e8c50b8cc83b94479e98a9685f2b7504997271c3090102062f503253482f00000000010000000006056b776f6675222103fccd1d6050f2abb9b8ece690672720600afccd553dfeb0dd23587d02601928a417033e00
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Let's stick with the readable version... :)&lt;/p&gt;
+&lt;p&gt;Most of what you see here are things that take care of the blockchain itself. For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;blockhash&lt;/code&gt; identifies this block&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;previousblockhash&lt;/code&gt; links it to its predecessor (hence the name "block&lt;em&gt;chain&lt;/em&gt;"&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;difficulty&lt;/code&gt; controls how many values for &lt;code&gt;nonce&lt;/code&gt; need to be tried to generate a block. It gets adjusted automatically as a function of the &lt;code&gt;timestamps&lt;/code&gt; in the chain.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;While this is all very fascinating, it is nothing specific to the Twister blockchain.
+In fact, the only thing in which Twister significantly differs from the bitcoin chain is what the &lt;em&gt;transactions&lt;/em&gt; (or short: &lt;code&gt;tx&lt;/code&gt;) contain and what the miner gets for the mining.&lt;/p&gt;
+&lt;p&gt;Now, the transactions in Twister don't say "Alice just sent Bob 0.001 BTC" as they do for Bitcoin.
+Rather they tell the Twister daemon who registered and what public key they are using.
+So in block 71772 the user kwofu registered and that got recorded in the blockchain.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./twisterd getrawtransaction kwofu 1
+
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;hex&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;010000000006056b776f6675222103fccd1d6050f2abb9b8ece690672720600afccd553dfeb0dd23587d02601928a417033e00&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;txid&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;6756f780590a51b6857104268c58c331b432b3d17290dbabd496c7f95c1033b0&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt; : 1,
+    &lt;span class="s2"&gt;&amp;quot;mess   age&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;username&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;kwofu&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;pubKey&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;03fccd1d6050f2abb9b8ece690672720600afccd553dfeb0dd23587d02601928a4&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;nonce&amp;quot;&lt;/span&gt; : 4064023,
+    &lt;span class="s2"&gt;&amp;quot;blockhash&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;height&amp;quot;&lt;/span&gt; : 71772,
+    &lt;span class="s2"&gt;&amp;quot;confirmations&amp;quot;&lt;/span&gt; : 44,
+    &lt;span class="s2"&gt;&amp;quot;time&amp;quot;&lt;/span&gt; : 1422554853,
+    &lt;span class="s2"&gt;&amp;quot;blocktime&amp;quot;&lt;/span&gt; : 1422554853
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;hex&lt;/code&gt; field contains all the information we see here, just more in a more compact encoding.
+The &lt;code&gt;txid&lt;/code&gt; uniquely identifies this particular transaction.
+&lt;code&gt;height&lt;/code&gt; tells us which block this transaction is a part of.
+&lt;code&gt;username&lt;/code&gt; and &lt;code&gt;pubkey&lt;/code&gt; are the part that we are actually interested in. Having the username and public key linked together by putting them into one transaction allows us to check if a particular twist from kwofu is actually signed with kwofu's key.
+This is how Twister checks that nobody can pose as another user.&lt;/p&gt;
+&lt;p&gt;The mining part is fairly simple: a Bitcoin miner will get 1 BTC for successfully mining a block. A Twister miner gets to put their name and message into the block itself. Since these messages get stored on &lt;em&gt;every&lt;/em&gt; daemon, they can be shown as advertisement to &lt;em&gt;every&lt;/em&gt; user.
+The idea is that every server and every client application will at least show some of them so that mining will actually be an attractive advertising option. 
+Or maybe some other solution will be found to the question of "Who keeps the Twister network running?"
+Who knows.
+Anyway, spam messages can either be posted by &lt;code&gt;@nobody&lt;/code&gt; in which case the spam message will just be entered into the block by the miner and that's it.
+Or it can be posted in the name of an existing account. For the above block, that was &lt;code&gt;@brunus&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;{
+    &amp;quot;txid&amp;quot; : &amp;quot;0000000000000000000000000000000000000000000000000000000000000000&amp;quot;,
+    &amp;quot;version&amp;quot; : 1,
+    &amp;quot;message&amp;quot; : &amp;quot;Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]&amp;quot;,
+    &amp;quot;username&amp;quot; : &amp;quot;brunus&amp;quot;,
+    &amp;quot;pubKey&amp;quot; : [
+        &amp;quot;02&amp;quot;,
+        &amp;quot;2f503253482f&amp;quot;
+    ],
+    &amp;quot;nonce&amp;quot; : 0,
+    &amp;quot;blockhash&amp;quot; : &amp;quot;70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d&amp;quot;,
+    &amp;quot;height&amp;quot; : 71772,
+    &amp;quot;confirmations&amp;quot; : 54,
+    &amp;quot;time&amp;quot; : 1422554853,
+    &amp;quot;blocktime&amp;quot; : 1422554853
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Although I am not quite sure why that &lt;code&gt;txid&lt;/code&gt; is always 0 for the spam transactions...&lt;/p&gt;
+&lt;p&gt;Anyway, hope this was interesting to someone else than me :P&lt;/p&gt;</summary><category term="blockchain"></category><category term="twister"></category></entry></feed>

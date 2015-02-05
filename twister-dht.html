@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+        <title>The Distributed Hash Table: Twister's Second Layer</title>
+        <meta charset="utf-8" />
+        <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Full Atom Feed" />
+        <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes Full RSS Feed" />
+        <link href="https://black-puppydog.github.io/feeds/programming.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Categories Atom Feed" />
+
+
+        <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+        <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
+
+        <link rel="stylesheet" type="text/css" href="./theme/gumby.css" />
+        <link rel="stylesheet" type="text/css" href="./theme/style.css" />
+        <link rel="stylesheet" type="text/css" href="./theme/pygment.css" />
+
+        <script src="./theme/js/libs/modernizr-2.6.2.min.js"></script>
+
+
+
+
+</head>
+
+<body id="index" class="home">
+
+
+    <div class="container">
+
+        <div class="row">
+
+          <header id="banner" class="body">
+                  <h1><a href="./">Some Personal Notes <strong></strong></a></h1>
+          </header><!-- /#banner -->
+
+            <div id="navigation" class="navbar row">
+              <a href="#" gumby-trigger="#navigation &gt; ul" class="toggle"><i class="icon-menu"></i></a>
+             
+              <ul class="columns">
+                <li><a href="./">Home</a></li>
+
+
+              </ul>
+            </div>
+
+<section id="content" class="body">
+
+   <div class="row">
+        <div class="eleven columns">
+
+
+            <header>
+              <h2 class="entry-title">
+                <a href="./twister-dht.html" rel="bookmark"
+                   title="Permalink to The Distributed Hash Table: Twister's Second Layer">The Distributed Hash Table: Twister's Second Layer</a></h2>
+           
+            </header>
+            <footer class="post-info">
+              <abbr class="published" title="2015-02-04T00:00:00+01:00">
+                mer. 04 février 2015
+              </abbr>
+              <address class="vcard author">By 
+                <a class="url fn" href="./author/daan-wynen.html"> Daan Wynen</a>
+              </address>
+            </footer><!-- /.post-info -->
+            <div class="entry-content">
+              <p>When reading about twister, the three layer model often comes up.
+It roughly goes like this:</p>
+<ol>
+<li>Blockchain for identity</li>
+<li>DHT for mutable information</li>
+<li>Torrent for write-only content</li>
+</ol>
+<p>In this post, I am going to look at the second layer because the Distributed Hash Table (DHT) is a fascinating invention and because people (including me) tend to have trouble wrapping their head around how it works.</p>
+<blockquote>
+<p><strong>Disclaimer</strong></p>
+<p>As with my last post, I am learning about these things myself at the moment.
+So if you find things that are unclear, incomplete or plain wrong, please tell me!</p>
+</blockquote>
+<p>First let us be clear what the task of the DHT is.
+<strong>What does and does not go into the DHT?</strong></p>
+<p>The DHT primarily holds <em>mutable</em> information such as user profiles, avatars as well as collaborative information such as mentions and hashtags.
+While at this point it also stores most of twister's posts, this is not why it is needed. 
+The torrent layer could (and does) handle the storing of posts as well, the use of the DHT for them is just a performance enhancement.
+On the other side of "layer 2" lies the block chain which holds the "slow-moving" identity management.
+The block chain manages who can use which username to post by associating a <a href="https://www.youtube.com/watch?v=wXB-V_Keiu8">public key</a> with each username. 
+My <a href="https://black-puppydog.withknown.com/2015/a-quick-note-on-twisters-blocks">previous post</a> about the blocks shows some examples.</p>
+<h2>The Regular Hash Table</h2>
+<p>Unsurprisingly, the "distributed hash table" is just a distributed version of a "hash table", a common data structure for storing and looking up data.</p>
+<p>You can store any <em>value</em> in a hash table using a <em>key</em>, and later you can retrieve it using the same key again.
+For this to work, it <em>hashes</em> the key with a <em>hash function</em>, which is really just to say we derive some number from the key by which we can sort the keys.
+This number does not even have to be unique.
+Of course, if the key is already a number that is quite simple.</p>
+<p>So fundamentally, a hash table has just two operations:</p>
+<ul>
+<li><code>put(key, value)</code></li>
+<li><code>value = get(key)</code></li>
+</ul>
+<h3>Example: Address Book</h3>
+<p>An address book is a really simple hash table.
+Assuming you order your address book by last names...</p>
+<ul>
+<li>The key of an entry is the person's last name.</li>
+<li>The value of an entry is the contact information like phone number, email etc, so basically a long string.</li>
+<li>The hash function is just "Given a family name, only look at its first letter".</li>
+</ul>
+<p>Say you want to store (i.e. add) a new contact. Say you want to add me, Daan Wynen, to your address book.
+You run my family name through the hash function, which lets you directly skip ahead to the "W" page where you then just add me to the bottom of the "W" list.
+You don't bother to sort that list, because there are only a handful of people there anyway.</p>
+<p>Now, when you want to look me up, you start the same way: look at my family name, see that it starts with "W", skip ahead to the "W" page.
+Then you just run your finger down the list until you find me and you're done.
+Much faster than keeping all contacts in one big list.</p>
+<h2>What Twister Stores in the DHT</h2>
+<p>I already said that the DHT stores things like profiles and hashtags.
+But what does that really mean?
+Well, as many things web, twister's data is really just a bunch of <a href="https://en.wikipedia.org/wiki/JSON">json</a> documents.
+<code>twisterd</code> allows us to store and retrieve these using the <code>dhtget</code> and <code>dhtput</code> commands:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./twisterd <span class="nb">help </span>dhtget
+dhtget &lt;username&gt; &lt;resource&gt; &lt;s<span class="o">(</span>ingle<span class="o">)</span>/m<span class="o">(</span>ulti<span class="o">)</span>&gt; <span class="o">[</span>timeout_ms<span class="o">]</span> <span class="o">[</span>timeout_multi_ms<span class="o">]</span> <span class="o">[</span>min_multi<span class="o">]</span>
+
+<span class="nv">$ </span>./twisterd <span class="nb">help </span>dhtput
+dhtput &lt;username&gt; &lt;resource&gt; &lt;s<span class="o">(</span>ingle<span class="o">)</span>/m<span class="o">(</span>ulti<span class="o">)</span>&gt; &lt;value&gt; &lt;sig_user&gt; &lt;seq&gt;
+</pre></div>
+
+
+<p>Here is an example:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./twisterd dhtget black_puppydog profile s
+<span class="o">[</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;p&quot;</span> : <span class="o">{</span>
+            <span class="s2">&quot;height&quot;</span> : 63503,
+            <span class="s2">&quot;seq&quot;</span> : 31,
+            <span class="s2">&quot;target&quot;</span> : <span class="o">{</span>
+                <span class="s2">&quot;n&quot;</span> : <span class="s2">&quot;black_puppydog&quot;</span>,
+                <span class="s2">&quot;r&quot;</span> : <span class="s2">&quot;profile&quot;</span>,
+                <span class="s2">&quot;t&quot;</span> : <span class="s2">&quot;s&quot;</span>
+            <span class="o">}</span>,
+            <span class="s2">&quot;time&quot;</span> : 1417107655,
+            <span class="s2">&quot;v&quot;</span> : <span class="o">{</span>
+                <span class="s2">&quot;bio&quot;</span> : <span class="s2">&quot;Hangs out here for the self-selecting group of people to follow.&quot;</span>,
+                <span class="s2">&quot;fullname&quot;</span> : <span class="s2">&quot;Daan Wynen&quot;</span>,
+                <span class="s2">&quot;location&quot;</span> : <span class="s2">&quot;Grenoble, France&quot;</span>,
+                <span class="s2">&quot;tox&quot;</span> : <span class="s2">&quot;52166FAEB07E85551AE5C567CB37C16B31FC9F6DDCF64D2DAC7A13D426DAB976224A9A737A3C&quot;</span>,
+                <span class="s2">&quot;url&quot;</span> : <span class="s2">&quot;http://black-puppydog.withknown.com/&quot;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>,
+        <span class="s2">&quot;sig_p&quot;</span> : <span class="s2">&quot;20fc80066bf07eb708d9ced08958de863f42351e60495046bced9a05afab698a9abacb7208cfc0d31635edb4357be93a1820e80ba40396226628ce6deb07dc57af&quot;</span>,
+        <span class="s2">&quot;sig_user&quot;</span> : <span class="s2">&quot;black_puppydog&quot;</span>
+    <span class="o">}</span>
+<span class="o">]</span>
+</pre></div>
+
+
+<p>The actual profile is held in the <strong><code>v</code></strong> field: Name, location and whatever else information the user has added.
+The rest is bureaucracy:</p>
+<p><strong><code>height</code></strong> is the number of the newest block when this value was stored in the DHT.
+This, together with the <strong><code>time</code></strong> (which is a UNIX timestamp) establishes that I changed my profile at 2014-11-27T17:00:55 UTC.
+<strong><code>seq</code></strong> increments every time this entry is changed. 
+These three can be used to keep the DHT consistent: if some node has been disconnected for a few months and suddenly starts handing out outdated info, other nodes can simply discard it as such.</p>
+<p>The <strong><code>target</code></strong> element holds the key of the entry; <em>name</em>, <em>resource</em> and <em>type</em>.
+These are the ones we have to provide to <code>twisterd</code>.</p>
+<p>The <code>username</code> argument is also (ab)used for hashtags, which can be retrieved like this:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./twisterd dhtget twister hashtag m <span class="m">500</span> <span class="m">500</span> 10
+<span class="o">[</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;p&quot;</span> : <span class="o">{</span>
+            <span class="s2">&quot;height&quot;</span> : 72459,
+            <span class="s2">&quot;target&quot;</span> : <span class="o">{</span>
+                <span class="s2">&quot;n&quot;</span> : <span class="s2">&quot;twister&quot;</span>,
+                <span class="s2">&quot;r&quot;</span> : <span class="s2">&quot;hashtag&quot;</span>,
+                <span class="s2">&quot;t&quot;</span> : <span class="s2">&quot;m&quot;</span>
+            <span class="o">}</span>,
+            <span class="s2">&quot;time&quot;</span> : 1423000508,
+            <span class="s2">&quot;v&quot;</span> : <span class="o">{</span>
+                <span class="s2">&quot;sig_userpost&quot;</span> : <span class="s2">&quot;1fd080fe37fd0c4a250005eebad68196ae62aa647ab0e3533bef7af87a5a8c3c2944ec7184bfb92dd18c439eaa4aefa3baf861a917f9c62006968c715fdd0bb292&quot;</span>,
+                <span class="s2">&quot;userpost&quot;</span> : <span class="o">{</span>
+                    <span class="s2">&quot;height&quot;</span> : 72459,
+                    <span class="s2">&quot;k&quot;</span> : 519,
+                    <span class="s2">&quot;lastk&quot;</span> : 518,
+                    <span class="s2">&quot;msg&quot;</span> : <span class="s2">&quot;With the new Raspberry Pi 2 now running a #Bitcoin or #Twister Node is easily doable.  Only </span><span class="nv">$50</span><span class="s2"> for a Twister node. </span><span class="nv">$75</span><span class="s2"> for a BTC node&quot;</span>,
+                    <span class="s2">&quot;n&quot;</span> : <span class="s2">&quot;avatarx&quot;</span>,
+                    <span class="s2">&quot;time&quot;</span> : 1423000508
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>,
+        <span class="s2">&quot;sig_p&quot;</span> : <span class="s2">&quot;1f3a3bf0b704085e77918f8a7c9304c1002fd277cbbc39aad5899ff007277d761eb60be7b87d316aefb8685a109336bed41918b3dddedee897aeb10f2418228618&quot;</span>,
+        <span class="s2">&quot;sig_user&quot;</span> : <span class="s2">&quot;avatarx&quot;</span>
+    <span class="o">}</span>,
+
+...
+</pre></div>
+
+
+<p>The <strong><code>s(ingle)/m(ulti)</code></strong> argument tells <code>twisterd</code> if there is one unique value stored for this key or if multiple values can be stored in the DHT.
+For hashtags, obviously any user should be able to store an entry, and we mostly want to retrieve more than one entry for a hashtag.
+A profile on the other hand is unique to a user and thus only has one entry.</p>
+<p>Last but not least, the <strong><code>sig_p</code></strong> and <strong><code>sig_user</code></strong> let us verify that this entry was created by a certain user using the public key stored in the block chain.</p>
+<p>Similarly, if I want to update my profile to show off my brand-new pelican-powered blag, and I am even too smug to use the HTML interface, I can do so like this:</p>
+<div class="highlight"><pre><span class="nv">$ profile</span><span class="o">=</span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;bio&quot; : &quot;Hangs out here for the self-selecting group of people to follow.&quot;,</span>
+<span class="s1">    &quot;fullname&quot; : &quot;Daan Wynen&quot;,</span>
+<span class="s1">    &quot;location&quot; : &quot;Grenoble, France&quot;,</span>
+<span class="s1">    &quot;tox&quot; : &quot;52166FAEB07E85551AE5C567CB37C16B31FC9F6DDCF64D2DAC7A13D426DAB976224A9A737A3C&quot;,</span>
+<span class="s1">    &quot;url&quot; : &quot;http://black-puppydog.github.io&quot;</span>
+<span class="s1">}&#39;</span>
+<span class="nv">$ </span>./twisterd dhtput black_puppydog profile s <span class="nv">$profile</span> black_puppydog 33
+<span class="nv">$ </span>./twisterd dhtget black_puppydog profile s
+<span class="o">[</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;p&quot;</span> : <span class="o">{</span>
+            <span class="s2">&quot;height&quot;</span> : 72461,
+            <span class="s2">&quot;seq&quot;</span> : 33,
+            <span class="s2">&quot;target&quot;</span> : <span class="o">{</span>
+                <span class="s2">&quot;n&quot;</span> : <span class="s2">&quot;black_puppydog&quot;</span>,
+                <span class="s2">&quot;r&quot;</span> : <span class="s2">&quot;profile&quot;</span>,
+                <span class="s2">&quot;t&quot;</span> : <span class="s2">&quot;s&quot;</span>
+            <span class="o">}</span>,
+            <span class="s2">&quot;time&quot;</span> : 1423003589,
+            <span class="s2">&quot;v&quot;</span> : <span class="o">{</span>
+                <span class="s2">&quot;bio&quot;</span> : <span class="s2">&quot;Hangs out here for the self-selecting group of people to follow.&quot;</span>,
+                <span class="s2">&quot;fullname&quot;</span> : <span class="s2">&quot;Daan Wynen&quot;</span>,
+                <span class="s2">&quot;location&quot;</span> : <span class="s2">&quot;Grenoble, France&quot;</span>,
+                <span class="s2">&quot;tox&quot;</span> : <span class="s2">&quot;52166FAEB07E85551AE5C567CB37C16B31FC9F6DDCF64D2DAC7A13D426DAB976224A9A737A3C&quot;</span>,
+                <span class="s2">&quot;url&quot;</span> : <span class="s2">&quot;http://black-puppydog.github.io&quot;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>,
+        <span class="s2">&quot;sig_p&quot;</span> : <span class="s2">&quot;1f0c58b58cb01b2819f375510eb9e851522e816891ad88772a2151691dfb410c4e1900594b35e45eaba590faff6c5b50ffcc53e258dd0a9809556f5779e3020d87&quot;</span>,
+        <span class="s2">&quot;sig_user&quot;</span> : <span class="s2">&quot;black_puppydog&quot;</span>
+    <span class="o">}</span>
+<span class="o">]</span>
+</pre></div>
+
+
+<p>And sure enought, the new website also shows up in the HTML:
+<img alt="Yay, now everyone can marvel at my ramblings!" src="./images/2015-02-04_my_profile.png" /></p>
+<p>This is not too surprising since the HTML/JavaScript interface makes the exact same calls to the <code>twisterd</code> running as server as does <code>twisterd</code> itself when called with the <code>dhtget</code> command.</p>
+<h2>How the DHT Stores And Retrieves Data</h2>
+<p>The DHT was made popular by file sharing networks like BitTorrent.
+If you have used BitTorrent's <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet links</a> you have used a DHT to retrieve a .torrent file.
+Back in the day, these .torrent files had to be hosted somewhere and you would have to download them before you could get that movie or .iso or whatever.
+Now, with the DHT network, you just get the magnet link, which is a hash of the .torrent file. 
+With this hash you then retrieve the file itself, so the hash of the file itself acts as the key to the file in the hash table.
+Since the hash is long this key is assumed to be unique, an assumption that seems <a href="https://crypto.stackexchange.com/questions/418/is-the-number-of-creatable-torrents-limited">reasonable enough</a> given the numbers involved.</p>
+<p>For twister, the situation is similar: the three inputs <code>name</code>, <code>resource</code> and one bit for <code>m</code>/<code>s</code> are made into a joint sha1 hash that then gets used as the key.</p>
+<p>First, when storing a key/value pair in the DHT, the question is which node(s) should store it.
+Some naive strategies come to mind here:</p>
+<ul>
+<li>every node stores every key/value pair</li>
+<li>only one random node stores every key/value pair</li>
+</ul>
+<p>Obviously, these strategies are not very suitable to the task, but using them as examples we can clearly see what we would like the Best Strategy™ to look like.</p>
+<p>If every node stores every entry, then looking up an entry is always fast, since it is already present on the node performing the search. We like that. 
+But that would require that every node store every entry, which can be a lot of data.
+And if an entry gets updated on one node, that change would have to propagate through the network, and until it would, other nodes would receive the old value when searching for the key. 
+We don't like that...</p>
+<p>On the other hand, if we store every pair on exactly one random node, then we save lots of storage space across the network, and also the bandwidth to send the data to every node!
+We like that.
+But then searching would take forever since we would have to ask <em>every</em> node if they hold the pair for the key we're searching for.
+We don't like that for sure...</p>
+<p>Obviously, twister does neither of those two.
+In fact, twister just uses the <a href="https://en.wikipedia.org/wiki/Kademlia">Kademlia</a> implementation of a DHT.
+Kademlia, like any decent DHT implementation, assigns a <em>node ID</em> to every node in the network, so in twister's case every twisterd.</p>
+<p>The important part about these IDs is that they can be regarded as being in the same <em>space</em> as the keys used for storage and retrieval.
+One then defines a <em>distance function</em> between keys and node IDs.
+The idea is that only nodes <em>close to an entry's key</em> store its data.</p>
+<h3>Example: 2D Key Space</h3>
+<p>Imagine we would use a really simple distance function:
+The keys and node IDs are both 40 bits long. 
+We regard the first 20 bits as an x coordinate, and the second 20 bits as a y coordinate, and we divide both of them by 2^20 so all coordinates are in [0, 1].
+The distance between two points (x1, y1) and (x2, y2) is then simply the (euclidean) distance between those points.
+For example:
+<img alt="Some nodes covering the 2D key space" src="./images/2015-02-04_voronoi_1.png" />
+Here the points <em>inside</em> the polygons are the nodes and the areas around them are the regions of the key space they are responsible for.</p>
+<h3>Retrieving Data</h3>
+<p>When <code>twisterd</code> has created the sha1 hash of the key it starts <em>routing</em> towards a node that holds the corresponding data.
+For this, every node holds a <em>routing table</em> of peers and their corresponding node IDs.
+These are the DHT peers you can see on twister's Network page.
+The lookup is an iterative process: on every iteration twisterd queries a node, starting with itself, for the given key.
+If the current node is not responsible for the key because its node ID is not close enough to the key then the node being queried looks into its own routing table to find another node <em>that is closer to the key than itself</em>.
+So on every iteration twisterd queries a node that is closer to the key than the last one.
+If the node being queried holds the key (or the *should hold it but it simply doesn't exist) then the process finishes.</p>
+<h3>Storing Data</h3>
+<p>This is actually quite trivial. <code>twisterd</code> could simply send the new key/value pair to any of its peers.
+Since the recipient could check if it is responsible for this key, it could decide whether to store it or to forward it to a node closer to the key.
+But Kademlia is a bit cleverer than that.
+Instead of relying on the forwarding mechanism it first finds a node close to the key, which is really just the same procedure as before for the look-up.
+It then sends the new data this node, sparing the network a lot of forwarding messages.</p>
+<h3>Adding and Removing Nodes</h3>
+<p>People go on- and offline all the time.
+For the DHT network that means that nodes suddenly appear and disappear.
+When a node appears, it is allocated a region of the key space that it is responsible for, based on its node ID.
+To stay with the simple example from above:</p>
+<p><img alt="Some nodes covering the 2D key space" src="./images/2015-02-04_voronoi_2.png" /></p>
+<p>But what happens when a node disappears, maybe because the owner of the PC running this twister server is going to bed?
+To prevent the data on this node from simply disappearing, every key is stored not only on one node, but on several nodes, and when a node disappears these responsibilities are renegotiated, just as they are when a node appears:</p>
+<p><img alt="Some nodes covering the 2D key space" src="./images/2015-02-04_voronoi_3.png" /></p>
+<h2>Summary</h2>
+<p>Twister's DHT is a proven system for storing data in a decentralized manner.
+Through the use of signatures and the public keys stored in the block chain each user keeps control over their profile information and other data.
+And the principle behind the DHT is even quite simple to sum up:</p>
+<blockquote>
+<p>If I cannot help you get what you want, I know a guy who can.</p>
+</blockquote>
+<p>I hope I got across the point that DHTs are fascinating and useful. If you like this post, please tell me.
+If you think it sucked, please, tell me why!</p>
+            </div><!-- /.entry-content -->
+
+
+        </div><!-- /.eleven.columns -->
+
+<div class="three columns">
+
+
+
+<nav class="widget">
+  <h4>Social</h4>
+  <ul>
+    <li><a href="https://pgp.mit.edu/pks/lookup?search=0x137F9369832AE525">Email</a></li>
+    <li><a href="https://twisterio.com/timeline/black_puppydog">Twister</a></li>
+    <li><a href="https://www.facebook.com/black.puppydog">Facebook</a></li>
+  </ul>
+</nav>
+
+
+
+<h4>Categories</h4>
+<ul>
+		<li><a href="./category/programming.html">Programming</a></li>
+		<li><a href="./category/war-on-democracy.html">War on Democracy</a></li>
+</ul>
+
+
+<h4>Tags</h4>
+	<ul>
+	    <li class="tag-4"><a href="./tag/blockchain.html">blockchain</a></li>
+	    <li class="tag-4"><a href="./tag/terrorism.html">Terrorism</a></li>
+	    <li class="tag-4"><a href="./tag/fud.html">FUD</a></li>
+	    <li class="tag-4"><a href="./tag/dht.html">DHT</a></li>
+	    <li class="tag-1"><a href="./tag/twister.html">twister</a></li>
+	    <li class="tag-4"><a href="./tag/bullshit.html">Bullshit</a></li>
+	    <li class="tag-4"><a href="./tag/france.html">France</a></li>
+</ul>
+
+</div> </div><!-- /.row -->
+
+
+</section>
+
+       </div><!-- /.row -->
+    </div><!-- /.container -->
+
+
+       <div class="container.nopad bg">
+
+    
+        <footer id="credits" class="row">
+          <div class="seven columns left-center">
+
+                   <address id="about" class="vcard body">
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    <br />
+                    Based on the <a target="_blank" href="http://gumbyframework.com">Gumby Framework</a>
+                    </address>
+          </div>
+
+
+          <div class="seven columns">
+            <div class="row">
+              <ul class="socbtns">
+
+
+
+
+
+              </ul>
+            </div>
+          </div>
+        </footer>
+
+    </div>
+
+
+  <script src="./theme/js/libs/jquery-1.9.1.min.js"></script>
+  <script src="./theme/js/libs/gumby.min.js"></script>
+  <script src="./theme/js/plugins.js"></script>
+</body>
+</html>

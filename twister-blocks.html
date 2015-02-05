@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+        <title>A Note on Twister Transactions</title>
+        <meta charset="utf-8" />
+        <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Full Atom Feed" />
+        <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes Full RSS Feed" />
+        <link href="https://black-puppydog.github.io/feeds/programming.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Categories Atom Feed" />
+
+
+        <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+        <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
+
+        <link rel="stylesheet" type="text/css" href="./theme/gumby.css" />
+        <link rel="stylesheet" type="text/css" href="./theme/style.css" />
+        <link rel="stylesheet" type="text/css" href="./theme/pygment.css" />
+
+        <script src="./theme/js/libs/modernizr-2.6.2.min.js"></script>
+
+
+
+
+</head>
+
+<body id="index" class="home">
+
+
+    <div class="container">
+
+        <div class="row">
+
+          <header id="banner" class="body">
+                  <h1><a href="./">Some Personal Notes <strong></strong></a></h1>
+          </header><!-- /#banner -->
+
+            <div id="navigation" class="navbar row">
+              <a href="#" gumby-trigger="#navigation &gt; ul" class="toggle"><i class="icon-menu"></i></a>
+             
+              <ul class="columns">
+                <li><a href="./">Home</a></li>
+
+
+              </ul>
+            </div>
+
+<section id="content" class="body">
+
+   <div class="row">
+        <div class="eleven columns">
+
+
+            <header>
+              <h2 class="entry-title">
+                <a href="./twister-blocks.html" rel="bookmark"
+                   title="Permalink to A Note on Twister Transactions">A Note on Twister Transactions</a></h2>
+           
+            </header>
+            <footer class="post-info">
+              <abbr class="published" title="2015-01-30T01:22:31+01:00">
+                ven. 30 janvier 2015
+              </abbr>
+              <address class="vcard author">By 
+                <a class="url fn" href="./author/daan-wynen.html"> Daan Wynen</a>
+              </address>
+            </footer><!-- /.post-info -->
+            <div class="entry-content">
+              <p>This is just a quick note about what the blockchain does and does not store.</p>
+<blockquote>
+<p><strong>Disclaimer</strong></p>
+<p>I didn't write this software, and I am mostly trying to make sense of it myself at the moment.
+So if you find things that are unclear, incomplete or plain wrong, please tell me!</p>
+</blockquote>
+<p>The "what is not in the blockchain?" part is easy: anything that does not relate to user names, public keys, the spam messages or the blockchain itself lives <em>outside</em> the blockchain.
+Profiles and twists are stored in a Distributed Hash Table (DHT) and the twists also in a torrent swarm.
+This is because storing all twists in the chain, although possible, would not scale.
+A block chain is relatively slow, and more importantly, all nodes of the network would have to download and store <em>all</em> twists ever made.</p>
+<p>So what does the chain store, concretely?
+You can find out by running some simple commands for your local twister daemon:</p>
+<p>Let's get a random block from the chain:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./twisterd getblockhash  71772
+70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d
+
+<span class="nv">$ </span>./twisterd getblock  70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d
+<span class="o">{</span>
+    <span class="s2">&quot;hash&quot;</span> : <span class="s2">&quot;70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d&quot;</span>,
+    <span class="s2">&quot;confirmations&quot;</span> : 38,
+    <span class="s2">&quot;size&quot;</span> : 361,
+    <span class="s2">&quot;height&quot;</span> : 71772,
+    <span class="s2">&quot;version&quot;</span> : 2,
+    <span class="s2">&quot;merkleroot&quot;</span> : <span class="s2">&quot;ba8dd4de438b296fe16f619f16a988700f1161fbba3fefadef7df14964823c7b&quot;</span>,
+    <span class="s2">&quot;tx&quot;</span> : <span class="o">[</span>
+        <span class="s2">&quot;1cd83cd3c6d4bc41099cc57bf592f2ce91470d09f364b5dda49c828474e2bcb9&quot;</span>,
+        <span class="s2">&quot;0000001ba539c9045a906a8efe4b1fdbe916b925098cc58be422060e987df636&quot;</span>
+    <span class="o">]</span>,
+    <span class="s2">&quot;spamMessage&quot;</span> : <span class="s2">&quot;Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]&quot;</span>,
+    <span class="s2">&quot;spamUser&quot;</span> : <span class="s2">&quot;brunus&quot;</span>,
+    <span class="s2">&quot;userhashes&quot;</span> : <span class="o">[</span>
+        <span class="s2">&quot;6756f780590a51b6857104268c58c331b432b3d17290dbabd496c7f95c1033b0&quot;</span>
+    <span class="o">]</span>,
+    <span class="s2">&quot;usernames&quot;</span> : <span class="o">[</span>
+        <span class="s2">&quot;kwofu&quot;</span>
+    <span class="o">]</span>,
+    <span class="s2">&quot;time&quot;</span> : 1422554853,
+    <span class="s2">&quot;nonce&quot;</span> : 4700834,
+    <span class="s2">&quot;bits&quot;</span> : <span class="s2">&quot;1d429ed8&quot;</span>,
+    <span class="s2">&quot;difficulty&quot;</span> : 0.01501017,
+    <span class="s2">&quot;previousblockhash&quot;</span> : <span class="s2">&quot;6d36ace676ce6a8e600f31fa743eef7e96110c3713d9736f138cd864a9fa7c88&quot;</span>,
+    <span class="s2">&quot;nextblockhash&quot;</span> : <span class="s2">&quot;8da5a51cf66ee39e0fb98dd5b137a19ec143d80e085083317c96e4ff36e8d149&quot;</span>
+<span class="o">}</span>
+</pre></div>
+
+
+<p>This is a human-readable representation of a block as it is stored in the blockchain.
+The non-readable version is this:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./twisterd getblock  70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d <span class="nb">false</span>
+
+020000005c180100887cfaa964d88c136f73d913370c11967eef3e74fa310f608e6ace76e6ac366d7b3c826449f17defadef3fbafb61110f7088a9169f616fe16f298b43ded48dbae576ca54d89e421da2ba470002010000007f4c7d50726f6d6f74656420706f73747320617265206e656564656420746f2072756e20746865206e6574776f726b20696e6672617374727563747572652e20496620796f752077616e7420746f2068656c702c2073746172742067656e65726174696e6720626c6f636b7320616e64206164766572746973652e205b656e5d4e066272756e7573411fe3902beb204364ffc5d89c6fec2bed2a13c6debeec22893fb088431dc426c8e164f42035c93c6de03b20f96cf86dfb0676e8c50b8cc83b94479e98a9685f2b7504997271c3090102062f503253482f00000000010000000006056b776f6675222103fccd1d6050f2abb9b8ece690672720600afccd553dfeb0dd23587d02601928a417033e00
+</pre></div>
+
+
+<p>Let's stick with the readable version... :)</p>
+<p>Most of what you see here are things that take care of the blockchain itself. For example:</p>
+<ul>
+<li><code>blockhash</code> identifies this block</li>
+<li><code>previousblockhash</code> links it to its predecessor (hence the name "block<em>chain</em>"</li>
+<li><code>difficulty</code> controls how many values for <code>nonce</code> need to be tried to generate a block. It gets adjusted automatically as a function of the <code>timestamps</code> in the chain.</li>
+</ul>
+<p>While this is all very fascinating, it is nothing specific to the Twister blockchain.
+In fact, the only thing in which Twister significantly differs from the bitcoin chain is what the <em>transactions</em> (or short: <code>tx</code>) contain and what the miner gets for the mining.</p>
+<p>Now, the transactions in Twister don't say "Alice just sent Bob 0.001 BTC" as they do for Bitcoin.
+Rather they tell the Twister daemon who registered and what public key they are using.
+So in block 71772 the user kwofu registered and that got recorded in the blockchain.</p>
+<div class="highlight"><pre><span class="nv">$ </span>./twisterd getrawtransaction kwofu 1
+
+<span class="o">{</span>
+    <span class="s2">&quot;hex&quot;</span> : <span class="s2">&quot;010000000006056b776f6675222103fccd1d6050f2abb9b8ece690672720600afccd553dfeb0dd23587d02601928a417033e00&quot;</span>,
+    <span class="s2">&quot;txid&quot;</span> : <span class="s2">&quot;6756f780590a51b6857104268c58c331b432b3d17290dbabd496c7f95c1033b0&quot;</span>,
+    <span class="s2">&quot;version&quot;</span> : 1,
+    <span class="s2">&quot;mess   age&quot;</span> : <span class="s2">&quot;&quot;</span>,
+    <span class="s2">&quot;username&quot;</span> : <span class="s2">&quot;kwofu&quot;</span>,
+    <span class="s2">&quot;pubKey&quot;</span> : <span class="o">[</span>
+        <span class="s2">&quot;03fccd1d6050f2abb9b8ece690672720600afccd553dfeb0dd23587d02601928a4&quot;</span>
+    <span class="o">]</span>,
+    <span class="s2">&quot;nonce&quot;</span> : 4064023,
+    <span class="s2">&quot;blockhash&quot;</span> : <span class="s2">&quot;70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d&quot;</span>,
+    <span class="s2">&quot;height&quot;</span> : 71772,
+    <span class="s2">&quot;confirmations&quot;</span> : 44,
+    <span class="s2">&quot;time&quot;</span> : 1422554853,
+    <span class="s2">&quot;blocktime&quot;</span> : 1422554853
+<span class="o">}</span>
+</pre></div>
+
+
+<p>The <code>hex</code> field contains all the information we see here, just more in a more compact encoding.
+The <code>txid</code> uniquely identifies this particular transaction.
+<code>height</code> tells us which block this transaction is a part of.
+<code>username</code> and <code>pubkey</code> are the part that we are actually interested in. Having the username and public key linked together by putting them into one transaction allows us to check if a particular twist from kwofu is actually signed with kwofu's key.
+This is how Twister checks that nobody can pose as another user.</p>
+<p>The mining part is fairly simple: a Bitcoin miner will get 1 BTC for successfully mining a block. A Twister miner gets to put their name and message into the block itself. Since these messages get stored on <em>every</em> daemon, they can be shown as advertisement to <em>every</em> user.
+The idea is that every server and every client application will at least show some of them so that mining will actually be an attractive advertising option. 
+Or maybe some other solution will be found to the question of "Who keeps the Twister network running?"
+Who knows.
+Anyway, spam messages can either be posted by <code>@nobody</code> in which case the spam message will just be entered into the block by the miner and that's it.
+Or it can be posted in the name of an existing account. For the above block, that was <code>@brunus</code>.</p>
+<div class="highlight"><pre>{
+    &quot;txid&quot; : &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;version&quot; : 1,
+    &quot;message&quot; : &quot;Promoted posts are needed to run the network infrastructure. If you want to help, start generating blocks and advertise. [en]&quot;,
+    &quot;username&quot; : &quot;brunus&quot;,
+    &quot;pubKey&quot; : [
+        &quot;02&quot;,
+        &quot;2f503253482f&quot;
+    ],
+    &quot;nonce&quot; : 0,
+    &quot;blockhash&quot; : &quot;70b7f1bb37eb72d587f45457c5c0c0bdadd206f0115f66787d8565761688bd1d&quot;,
+    &quot;height&quot; : 71772,
+    &quot;confirmations&quot; : 54,
+    &quot;time&quot; : 1422554853,
+    &quot;blocktime&quot; : 1422554853
+}
+</pre></div>
+
+
+<p>Although I am not quite sure why that <code>txid</code> is always 0 for the spam transactions...</p>
+<p>Anyway, hope this was interesting to someone else than me :P</p>
+            </div><!-- /.entry-content -->
+
+
+        </div><!-- /.eleven.columns -->
+
+<div class="three columns">
+
+
+
+<nav class="widget">
+  <h4>Social</h4>
+  <ul>
+    <li><a href="https://pgp.mit.edu/pks/lookup?search=0x137F9369832AE525">Email</a></li>
+    <li><a href="https://twisterio.com/timeline/black_puppydog">Twister</a></li>
+    <li><a href="https://www.facebook.com/black.puppydog">Facebook</a></li>
+  </ul>
+</nav>
+
+
+
+<h4>Categories</h4>
+<ul>
+		<li><a href="./category/programming.html">Programming</a></li>
+		<li><a href="./category/war-on-democracy.html">War on Democracy</a></li>
+</ul>
+
+
+<h4>Tags</h4>
+	<ul>
+	    <li class="tag-4"><a href="./tag/blockchain.html">blockchain</a></li>
+	    <li class="tag-4"><a href="./tag/terrorism.html">Terrorism</a></li>
+	    <li class="tag-4"><a href="./tag/fud.html">FUD</a></li>
+	    <li class="tag-4"><a href="./tag/dht.html">DHT</a></li>
+	    <li class="tag-1"><a href="./tag/twister.html">twister</a></li>
+	    <li class="tag-4"><a href="./tag/bullshit.html">Bullshit</a></li>
+	    <li class="tag-4"><a href="./tag/france.html">France</a></li>
+</ul>
+
+</div> </div><!-- /.row -->
+
+
+</section>
+
+       </div><!-- /.row -->
+    </div><!-- /.container -->
+
+
+       <div class="container.nopad bg">
+
+    
+        <footer id="credits" class="row">
+          <div class="seven columns left-center">
+
+                   <address id="about" class="vcard body">
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org">Python</a>.
+                    <br />
+                    Based on the <a target="_blank" href="http://gumbyframework.com">Gumby Framework</a>
+                    </address>
+          </div>
+
+
+          <div class="seven columns">
+            <div class="row">
+              <ul class="socbtns">
+
+
+
+
+
+              </ul>
+            </div>
+          </div>
+        </footer>
+
+    </div>
+
+
+  <script src="./theme/js/libs/jquery-1.9.1.min.js"></script>
+  <script src="./theme/js/libs/gumby.min.js"></script>
+  <script src="./theme/js/plugins.js"></script>
+</body>
+</html>
