@@ -1,71 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-        <title>The Distributed Hash Table: Twister's Second Layer</title>
-        <meta charset="utf-8" />
-        <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Full Atom Feed" />
-        <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes Full RSS Feed" />
-        <link href="https://black-puppydog.github.io/feeds/programming.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Categories Atom Feed" />
+    <meta property="og:title" content="The Distributed Hash Table: Twister's Second Layer"/>
+    <meta property="og:url" content="https://black-puppydog.github.io/twister-dht.html"/>
+    <meta property="og:site_name" content="Some Personal Notes"/>
+    <meta property="og:type" content="article"/>
 
+    <link rel="canonical" href="https://black-puppydog.github.io/twister-dht.html" />
 
-        <!-- Mobile viewport optimized: j.mp/bplateviewport -->
-        <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
+    <title>The Distributed Hash Table: Twister's Second Layer | Some Personal Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="stylesheet" type="text/css" href="./theme/gumby.css" />
-        <link rel="stylesheet" type="text/css" href="./theme/style.css" />
-        <link rel="stylesheet" type="text/css" href="./theme/pygment.css" />
+    <link rel="stylesheet" href="https://black-puppydog.github.io/theme/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://black-puppydog.github.io/theme/css/bootstrap-responsive.min.css" type="text/css" />
 
-        <script src="./theme/js/libs/modernizr-2.6.2.min.js"></script>
+    <link rel="stylesheet" href="https://black-puppydog.github.io/theme/css/main.css" type="text/css" />
+    <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Atom Feed" />
+    <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes RSS Feed" />
 
-
-
-
+    <script type="text/javascript">var switchTo5x=true;</script>
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher: "",
+            doNotHash: false,
+            doNotCopy: false,
+            hashAddressBar: false
+        });
+    </script>
 </head>
 
-<body id="index" class="home">
+<body id="index">
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <header id="banner" >
+                <h1>
+                    <a href="https://black-puppydog.github.io/">Some Personal Notes </a>
+                </h1>
+                <nav class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav">
+                            <li class="active"><a href="https://black-puppydog.github.io/category/programming.html">Programming</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/war-on-democracy.html">War on Democracy</a></li>
+                        </ul>
+
+                    </div>
+                </nav>
+            </header><!-- /#banner -->
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <div class="row-fluid">
+<div class="span10 offset1">
+  <section>
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="https://black-puppydog.github.io/twister-dht.html" rel="bookmark"
+             title="Permalink to The Distributed Hash Table: Twister's Second Layer">The Distributed Hash Table: Twister's Second Layer</a></h1>
+      </header>
+      <div class="entry-content">
+<footer class="post-info">
+    <address class="vcard author">
+        by <a class="url fn" href="https://black-puppydog.github.io/author/daan-wynen.html">Daan Wynen</a>
+    </address>
+
+    in <a href="https://black-puppydog.github.io/category/programming.html">Programming</a>
+
+    on 2015-02-04
+
+        |
+        tags:         <a href="https://black-puppydog.github.io/tag/dht.html">DHT</a>
+        <a href="https://black-puppydog.github.io/tag/twister.html">twister</a>
 
 
-    <div class="container">
 
-        <div class="row">
+    
+</footer><!-- /.post-info -->
 
-          <header id="banner" class="body">
-                  <h1><a href="./">Some Personal Notes <strong></strong></a></h1>
-          </header><!-- /#banner -->
-
-            <div id="navigation" class="navbar row">
-              <a href="#" gumby-trigger="#navigation &gt; ul" class="toggle"><i class="icon-menu"></i></a>
-             
-              <ul class="columns">
-                <li><a href="./">Home</a></li>
-
-
-              </ul>
-            </div>
-
-<section id="content" class="body">
-
-   <div class="row">
-        <div class="eleven columns">
-
-
-            <header>
-              <h2 class="entry-title">
-                <a href="./twister-dht.html" rel="bookmark"
-                   title="Permalink to The Distributed Hash Table: Twister's Second Layer">The Distributed Hash Table: Twister's Second Layer</a></h2>
-           
-            </header>
-            <footer class="post-info">
-              <abbr class="published" title="2015-02-04T00:00:00+01:00">
-                mer. 04 février 2015
-              </abbr>
-              <address class="vcard author">By 
-                <a class="url fn" href="./author/daan-wynen.html"> Daan Wynen</a>
-              </address>
-            </footer><!-- /.post-info -->
-            <div class="entry-content">
-              <p>When reading about twister, the three layer model often comes up.
+        <p>When reading about twister, the three layer model often comes up.
 It roughly goes like this:</p>
 <ol>
 <li>Blockchain for identity</li>
@@ -233,7 +250,7 @@ A profile on the other hand is unique to a user and thus only has one entry.</p>
 
 
 <p>And sure enought, the new website also shows up in the HTML:
-<img alt="Yay, now everyone can marvel at my ramblings!" src="./images/2015-02-04_my_profile.png" /></p>
+<img alt="Yay, now everyone can marvel at my ramblings!" src="https://black-puppydog.github.io/images/2015-02-04_my_profile.png" /></p>
 <p>This is not too surprising since the HTML/JavaScript interface makes the exact same calls to the <code>twisterd</code> running as server as does <code>twisterd</code> itself when called with the <code>dhtget</code> command.</p>
 <h2>How the DHT Stores And Retrieves Data</h2>
 <p>The DHT was made popular by file sharing networks like BitTorrent.
@@ -270,7 +287,7 @@ The keys and node IDs are both 40 bits long.
 We regard the first 20 bits as an x coordinate, and the second 20 bits as a y coordinate, and we divide both of them by 2^20 so all coordinates are in [0, 1].
 The distance between two points (x1, y1) and (x2, y2) is then simply the (euclidean) distance between those points.
 For example:
-<img alt="Some nodes covering the 2D key space" src="./images/2015-02-04_voronoi_1.png" />
+<img alt="Some nodes covering the 2D key space" src="https://black-puppydog.github.io/images/2015-02-04_voronoi_1.png" />
 Here the points <em>inside</em> the polygons are the nodes and the areas around them are the regions of the key space they are responsible for.</p>
 <h3>Retrieving Data</h3>
 <p>When <code>twisterd</code> has created the sha1 hash of the key it starts <em>routing</em> towards a node that holds the corresponding data.
@@ -291,10 +308,10 @@ It then sends the new data this node, sparing the network a lot of forwarding me
 For the DHT network that means that nodes suddenly appear and disappear.
 When a node appears, it is allocated a region of the key space that it is responsible for, based on its node ID.
 To stay with the simple example from above:</p>
-<p><img alt="Some nodes covering the 2D key space" src="./images/2015-02-04_voronoi_2.png" /></p>
+<p><img alt="Some nodes covering the 2D key space" src="https://black-puppydog.github.io/images/2015-02-04_voronoi_2.png" /></p>
 <p>But what happens when a node disappears, maybe because the owner of the PC running this twister server is going to bed?
 To prevent the data on this node from simply disappearing, every key is stored not only on one node, but on several nodes, and when a node disappears these responsibilities are renegotiated, just as they are when a node appears:</p>
-<p><img alt="Some nodes covering the 2D key space" src="./images/2015-02-04_voronoi_3.png" /></p>
+<p><img alt="Some nodes covering the 2D key space" src="https://black-puppydog.github.io/images/2015-02-04_voronoi_3.png" /></p>
 <h2>Summary</h2>
 <p>Twister's DHT is a proven system for storing data in a decentralized manner.
 Through the use of signatures and the public keys stored in the block chain each user keeps control over their profile information and other data.
@@ -304,86 +321,33 @@ And the principle behind the DHT is even quite simple to sum up:</p>
 </blockquote>
 <p>I hope I got across the point that DHTs are fascinating and useful. If you like this post, please tell me.
 If you think it sucked, please, tell me why!</p>
-            </div><!-- /.entry-content -->
 
+      </div><!-- /.entry-content -->
 
-        </div><!-- /.eleven.columns -->
-
-<div class="three columns">
-
-
-
-<nav class="widget">
-  <h4>Social</h4>
-  <ul>
-    <li><a href="https://pgp.mit.edu/pks/lookup?search=0x137F9369832AE525">Email</a></li>
-    <li><a href="https://twisterio.com/timeline/black_puppydog">Twister</a></li>
-    <li><a href="https://www.facebook.com/black.puppydog">Facebook</a></li>
-  </ul>
-</nav>
-
-
-
-<h4>Categories</h4>
-<ul>
-		<li><a href="./category/programming.html">Programming</a></li>
-		<li><a href="./category/war-on-democracy.html">War on Democracy</a></li>
-</ul>
-
-
-<h4>Tags</h4>
-	<ul>
-	    <li class="tag-4"><a href="./tag/dht.html">DHT</a></li>
-	    <li class="tag-4"><a href="./tag/fud.html">FUD</a></li>
-	    <li class="tag-4"><a href="./tag/france.html">France</a></li>
-	    <li class="tag-4"><a href="./tag/blockchain.html">blockchain</a></li>
-	    <li class="tag-4"><a href="./tag/terrorism.html">Terrorism</a></li>
-	    <li class="tag-1"><a href="./tag/twister.html">twister</a></li>
-	    <li class="tag-4"><a href="./tag/bullshit.html">Bullshit</a></li>
-</ul>
-
-</div> </div><!-- /.row -->
-
-
-</section>
-
-       </div><!-- /.row -->
-    </div><!-- /.container -->
-
-
-       <div class="container.nopad bg">
-
-    
-        <footer id="credits" class="row">
-          <div class="seven columns left-center">
-
-                   <address id="about" class="vcard body">
-                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
-                    which takes great advantage of <a href="http://python.org">Python</a>.
-                    <br />
-                    Based on the <a target="_blank" href="http://gumbyframework.com">Gumby Framework</a>
-                    </address>
-          </div>
-
-
-          <div class="seven columns">
-            <div class="row">
-              <ul class="socbtns">
-
-
-
-
-
-              </ul>
+    </article>
+  </section>
+</div>
             </div>
-          </div>
-        </footer>
-
+        </div>
     </div>
 
+    <footer id="site-footer">
+        <div class="row-fluid">
+            <div class="span10 offset1">
+                <address>
+                    <p>
+                        This blog is proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                    </p>
+                    <p>
+                        <a href="http://github.com/jsliang/pelican-fresh/">Fresh</a> is a responsive theme designed by <a href="http://jsliang.com/">jsliang</a> and <a href="https://github.com/jsliang/pelican-fresh/graphs/contributors">contributors</a>.
+                        Special thanks to <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> and <a href="http://twitter.github.com/bootstrap">Twitter Bootstrap</a>.
+                    </p>
+                </address>
+            </div>
+        </div>
+    </footer>
 
-  <script src="./theme/js/libs/jquery-1.9.1.min.js"></script>
-  <script src="./theme/js/libs/gumby.min.js"></script>
-  <script src="./theme/js/plugins.js"></script>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="https://black-puppydog.github.io/theme/js/bootstrap.min.js"></script>
 </body>
 </html>
