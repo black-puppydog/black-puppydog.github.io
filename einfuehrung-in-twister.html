@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Daan Wynen" />
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:title" content="Twister: Twitter ohne Twitter Inc. TODO: Inc. stimmt?"/>
+    <meta property="og:url" content="./einfuehrung-in-twister.html"/>
+    <meta property="og:site_name" content="Some Personal Notes"/>
+    <meta property="og:type" content="article"/>
+
+    <link rel="canonical" href="./einfuehrung-in-twister.html" />
+
+    <title>Twister: Twitter ohne Twitter Inc. TODO: Inc. stimmt? | Some Personal Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="./theme/css/main.css" />
+
+    <script type="text/javascript">var switchTo5x=true;</script>
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher: "",
+            doNotHash: false,
+            doNotCopy: false,
+            hashAddressBar: false
+        });
+    </script>
+</head>
+
+<body id="index">
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <header id="banner" >
+                <h1>
+                    <a href="./">Some Personal Notes </a>
+                </h1>
+                <nav class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav">
+                            <li class="active"><a href="./category/privacy.html">Privacy</a></li>
+                            <li ><a href="./category/programming.html">Programming</a></li>
+                            <li ><a href="./category/war-on-democracy.html">War on Democracy</a></li>
+                        </ul>
+
+                    </div>
+                </nav>
+            </header><!-- /#banner -->
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <div class="row-fluid">
+<div class="span10 offset1">
+  <section>
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="./einfuehrung-in-twister.html" rel="bookmark"
+             title="Permalink to Twister: Twitter ohne Twitter Inc. TODO: Inc. stimmt?">Twister: Twitter ohne Twitter Inc. TODO: Inc. stimmt?</a></h1>
+      </header>
+      <div class="entry-content">
+<footer class="post-info">
+    <address class="vcard author">
+        by <a class="url fn" href="./author/daan-wynen.html">Daan Wynen</a>
+    </address>
+
+    in <a href="./category/privacy.html">Privacy</a>
+
+    on 2015-02-13
+
+        |
+        tags:         <a href="./tag/twister.html">Twister</a>
+        <a href="./tag/p2p.html">P2P</a>
+        <a href="./tag/web.html">Web</a>
+
+
+
+    
+</footer><!-- /.post-info -->
+
+        <p>Wer über das letzte Jahr mehr als fünf Minuten mit mir geredet hat, konnte vermutlich nicht umhin zu bemerken, dass ich mich mehr und mehr von großen Cloud-Anbietern unabhängig gemacht habe.
+Meine facebook-Timeline wird (im Vergleich zu vor zwei Jahren) recht stiefmütterlich behandelt, mein Dropbox-Account liegt seit über einem Jahr ungenutzt herum, Google liest inzwischen weder meine Mail noch Videochats, noch SMS oder sonst irgendetwas auf meinem Smartphone.</p>
+<p>Und in letzter Zeit sehe ich auch bei Twitter immer seltener vorbei.</p>
+<p>TODO: Überleitung</p>
+<p>Twister ist eine verteilte Alternative zu Twitter.
+Das wirft zunächst einmal die Frage auf: warum sollte man eine <em>Alternative</em> schaffen?
+Und was bedeutet <em>verteilt</em>?</p>
+<p>In diesem Post möchte ich diese Fragen sowie einige weitere so einfach wie möglich/nötig erklären.</p>
+<h2>Warum eine Alternative zu Twitter?</h2>
+<p>Das ist die grundsätzliche Frage, die Viele mir an dieser Stelle stellen, wenn ich ihnen von Twister oder ähnlichen Anwendungen erzähle. 
+Twitter funktioniert doch, was ist daran denn verkehrt?
+Das stimmt, aber Twitter hat einige grundlegende Eigenschaften, die ich persönlich als Probleme betrachte, und die sich nicht einfach beheben lassen.</p>
+<p>Ein Problem ist dabei, dass Twitter als US-Amerikanisches Unternehmen auch US-Gesetzen unterliegt.
+Dass die USA und insbesondere die NSA keine Chorknaben sind, kann dank Edward Snowden nun jedermann klar sehen.
+Aber vermutlich würde fast jedes Land angesichts derartige Datenmengen auf die Idee kommen, diese zu seinen Gunsten nutzbar zu machen. 
+Das zugrundeliegende Problem ist also nicht der Ort, an dem die Twitter-Server stehen, sondern der simple Fakt, dass das gesamte System Twitter ohne nennenswerte Regulierung zentral kontrolliert wird.
+Dieses Problem zeit sich dann in mehreren Schattierungen:</p>
+<h3>Überwachung</h3>
+<p>Seit den Veröffentlichungen aus den Snowden-Dokumenten wissen wir: eine Privatsphäre auf Twitter ist, wie auch bei Facebook und Google, illusorisch.
+Das ist bei Twitter nur bedingt ein Problem, da ja eh fast alles öffentlich geschieht, das ist ja gerade die Idee.
+Aber neben diesen öffentlichen Daten gibt es noch weitere, die nicht öffentlich sind, wie Direktnachrichten und natürlich Metadaten.
+Als Nachrichtendienst wüsste man z.B. sicher gerne, wer welche Profile ansieht, wer wann und wie oft mit wem interagiert, öffentlich oder privat, von welchen IP-Adressen welche Accounts genutzt werden usw.
+Twitters zentralisierte Struktur macht es besonders leicht, diese Daten zu sammeln oder einfach bei Bedarf abzufragen.</p>
+<h3>Zensur</h3>
+<p>Alle Tweets werden von Twitters Servern direkt an den Nutzer übertragen.
+Das ist nichts besonderes, fast jeder Service im Internet funktioniert so.
+Durch diese zentrale Struktur wird es besonders leicht, beliebige Inhalte zu unterdrücken.
+Die Türkei hat diesbezüglich ein deutliches Beispiel geliefert, als Erdogan Twitter schlicht blockieren ließ.
+Diese Art von Zensur ist technisch leicht zu umgehen, und so wurde die Twitter- und Youtube-Blockade in der Türkei zur größten Schulungsmaßnahme in Sachen Router-Konfiguration bisher, und auch das TOR-Netzwerk erfreute sich neuer Benutzer.
+TODO: Belegen
+Schwieriger wird es, wenn etwas die US-Regierung etwas auf Twitter nicht gefällt.
+Ein Tweet, der einmal gelöscht ist, kann von Twitter nicht mehr abgerufen werden, da hilft dann nur noch das Hoffen darauf, dass jemand einen Screenshot gemacht hat und auf den Streisandeffekt.
+TODO: link streisand
+Aber was tun, wenn ein Account gelöscht wird? Wer hat schon eine Kopie von einem kompletten Account?</p>
+<p>TODO:Beispiele von Zensur</p>
+<p>Wieder ist es Twitters zentralisierte Struktur, die diese Zensur so einfach macht, und damit kommen wir zum Kernproblem:</p>
+<h3>Transparenz</h3>
+<p>Oft höre ich an diesem Punkt als Gegenargument, dass es ja wichtig sei, dass man im Internet nicht alles einfach sagen kann.
+Schließlich gelten in den meisten Ländern Einschränkungen der Meinungsfreiheit:
+In Deutschland darf der Holocaust nicht geleugnet werden.
+Religion ist auch ein gutes Stückweit vor Verbalattacken geschützt, genau wie unser Bundespräsident. TODO: belegen
+Über Sinn und Unsinn dieser Gesetze zu debattieren ist natürlich richtig und wichtig, verfehlt meiner Meinung nach aber das Thema.
+Es ist absolut unrealistisch, etwas einmal gesagtes ungesagt zu machen.
+Was einmal öffentlich ist, wird wohl oder übel öffentlich bleiben.
+Man kann sich von gesagtem distanzieren, man kann seine Meinung komplett ändern, aber man kann etwas gesagtes nicht ungesagt machen, und genau genommen konnte man das noch nie.
+Und: Wer entscheidet eigentlich, wann und wie diese Gesetze angewendet werden?
+Natürlich gibt es immer wieder Statements von Twitter (TODO: belegen) aber woher wissen wir, dass es nicht tausende und abertausende Tweets gibt, die ohne viel Aufhebens "aus Gründen der nationalen Sicherheit", wegen "Copyright-Verstößen" oder einfach aus politischen Gründen gelöscht werden?
+Oder, um einmal für eine Minute den Aluhut aufzusetzen, woher weiß ich, dass meine Timeline auch alle Tweets anzeigt, die ich sehen will?
+Dass die US-Regierung aktiv versucht, Journalisten und Aktivisten mundtot zu machen, ist inzwischen belegt (TODO: link).
+Es wäre vermutlich sehr effektiv, die soziale Reichweite solcher Personen künstlich einzuschränken, indem man ihre Tweets einfach den meisten Leuten vorenthält und darauf hofft, dass sie dadurch im Hintergrundrauschen der sozialen Netzwerke verschwinden.</p>
+<p>Hier geht es also vor allem um Vertrauen.</p>
+<p>Vertrauen wir Twitter?
+Vertrauen wir der US-Regierung und potentiell noch vielen anderen, das sie "nur das beste für uns wollen"?
+Denn Twitter, wie auch andere Soziale Netzwerke, dient heute vielen Menschen als Informationsquelle, als ein Ort, an dem man Meinungen austauscht.[^Abgesehen vom Echokammereffekt... TODO: Link]</p>
+<p>Einige, wenige Orte des öffentlichen Diskurses, die auch noch leicht und ohne Spuren zu kontrollieren sind.
+Was wie der Traum eines jeden Autokraten klingt, ist heute leider alles andere als unrealistisch.</p>
+<ul>
+<li>warum nicht einfach twitter?<ul>
+<li>daten in USA</li>
+<li>als instrument nicht geeignet wenn zensur droht<ul>
+<li>zensur auch kaum zu bemerken</li>
+</ul>
+</li>
+<li>leicht überwachbar</li>
+</ul>
+</li>
+<li>was bedeutet dezentralisierung?</li>
+<li>
+<p>was echte verteilung?</p>
+</li>
+<li>
+<p>was kann twister?</p>
+<ul>
+<li>user profile<ul>
+<li>infos</li>
+<li>avatar</li>
+</ul>
+</li>
+<li>following</li>
+<li>hashtags</li>
+<li>mentions</li>
+<li>retwists</li>
+<li>DMs<ul>
+<li>leaken metadata</li>
+<li>aber echt verschlüsselt</li>
+<li>aber alles andere als ephemeral</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>was nicht?<ul>
+<li>twists löschen<ul>
+<li>feature, nicht bug</li>
+<li>aber aufpassen!</li>
+</ul>
+</li>
+<li>vergessenes passwort wiederherstellen</li>
+<li>geklautes passwort zurückbekommen</li>
+<li>volltextsuche</li>
+</ul>
+</li>
+<li>was noch nicht?</li>
+</ul>
+<p>Follow-up:</p>
+<ul>
+<li>wie funktioniert twister?</li>
+</ul>
+
+      </div><!-- /.entry-content -->
+
+    </article>
+  </section>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="site-footer">
+        <div class="row-fluid">
+            <div class="span10 offset1">
+                <address>
+                    <p>
+                        This blog is proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                    </p>
+                    <p>
+                        <a href="http://github.com/jsliang/pelican-fresh/">Fresh</a> is a responsive theme designed by <a href="http://jsliang.com/">jsliang</a> and <a href="https://github.com/jsliang/pelican-fresh/graphs/contributors">contributors</a>.
+                        Special thanks to <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> and <a href="http://getbootstrap.com/">Twitter Bootstrap</a>.
+                    </p>
+                </address>
+            </div>
+        </div>
+    </footer>
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
