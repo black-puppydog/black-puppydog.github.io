@@ -7,14 +7,14 @@ So I thought a blog post was in order, both for my own reference and for others 
 The only other application I really need is a terminal, and I use the Gnome terminal emulator for that, which also uses GTK.
 So between these applications I think 99% of my computer time is covered and I won't bother to find out how to properly type these accents in any other way :)&lt;/p&gt;
 &lt;h2&gt;How to use the Codes&lt;/h2&gt;
-&lt;p&gt;In GTK you enter Unicode characters by pressint &lt;code&gt;Ctrl+Shift+U&lt;/code&gt;, then typing the character code, then pressing &lt;code&gt;Space&lt;/code&gt; or &lt;code&gt;Enter&lt;/code&gt;.
+&lt;p&gt;In GTK you enter Unicode characters by pressing &lt;code&gt;Ctrl+Shift+U&lt;/code&gt;, then typing the character code, then pressing &lt;code&gt;Space&lt;/code&gt; or &lt;code&gt;Enter&lt;/code&gt;.
 Alternatively you can hold the &lt;code&gt;Ctrl+Shift+U&lt;/code&gt; combination while typing the code and then just release it.&lt;/p&gt;
 &lt;h2&gt;Combining Codes&lt;/h2&gt;
 &lt;p&gt;Unicode allows the composition of characters.
-So for the most cases you can actually get away with a few codes:
-To use these, you first type whichever character you want to decorate (say a 'U') and then enter the code (say 327) afterwards (i.e. with the cursor placed &lt;em&gt;after&lt;/em&gt; the 'U') and voilà, you get 'U̧'.
+So for the most cases you can actually get away with a few codes that only represent the "decorations".
+To use these, you first type whichever character you want to decorate (say a 'U') and then enter the code (say 327) afterwards (i.e. with the cursor placed &lt;em&gt;after&lt;/em&gt; the 'U') and voilà, you get 'U̧'. &lt;br/&gt;
 Helpful, I know :)&lt;/p&gt;
-&lt;p&gt;So here are the combining characters for accents and the diaeresis (aka umlaut)&lt;/p&gt;
+&lt;p&gt;So here are the combining characters for accents and the diaeresis, aka umlaut:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -33,11 +33,11 @@ Helpful, I know :)&lt;/p&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;302&lt;/td&gt;
-&lt;td&gt;Cirsumflex Accent&lt;/td&gt;
+&lt;td&gt;Circumflex Accent&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;308&lt;/td&gt;
-&lt;td&gt;Diaerisis&lt;/td&gt;
+&lt;td&gt;Diaeresis&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;327&lt;/td&gt;
@@ -74,7 +74,7 @@ Helpful, I know :)&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2&gt;Shorter Codes&lt;/h2&gt;
-&lt;p&gt;Some symbols (think 'ç', 'è', 'à') are more common than others, so you might want to remember these (shorter) codes separately.
+&lt;p&gt;Some symbols (think 'ç', 'é', 'è', 'à') are more common than others, so you might want to remember these (shorter) codes separately.
 The &lt;a href="https://fr.wikipedia.org/wiki/Table_des_caract%C3%A8res_Unicode_(0000-0FFF)"&gt;Unicode tables&lt;/a&gt; for characters are loooooong so I collected the symbols used in French into this shorter table:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -157,7 +157,8 @@ The &lt;a href="https://fr.wikipedia.org/wiki/Table_des_caract%C3%A8res_Unicode_
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Or if you just came here to copy/paste a symbol, here you go:&lt;/p&gt;
+&lt;p&gt;&lt;br/&gt;
+Or if you just came here to copy/paste a symbol, here you go:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
