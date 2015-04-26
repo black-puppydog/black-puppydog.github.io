@@ -4,7 +4,7 @@ According to &lt;a href="https://en.wikipedia.org/wiki/French_orthography"&gt;Wi
 I wrote everything on a piece of paper, then immediately spilled a cup of coffee over it.
 So I thought a blog post was in order, both for my own reference and for others who might need it.&lt;/p&gt;
 &lt;p&gt;These codes work in any &lt;a href="http://www.gtk.org/"&gt;GTK&lt;/a&gt; application, which luckily includes &lt;a href="https://www.mozilla.org/en-US/firefox/desktop/"&gt;Firefox&lt;/a&gt;, &lt;a href="https://www.mozilla.org/en-US/thunderbird"&gt;Thunderbird&lt;/a&gt; and &lt;a href="https://pidgin.im/"&gt;Pidgin&lt;/a&gt;, i.e. just about the only three applications where I might care to use accents and all that stuff. :)
-The only other application I really need is a terminal, and I use the GNome terminal emulator for that, which also uses GTK.
+The only other application I really need is a terminal, and I use the Gnome terminal emulator for that, which also uses GTK.
 So between these applications I think 99% of my computer time is covered and I won't bother to find out how to properly type these accents in any other way :)&lt;/p&gt;
 &lt;h2&gt;How to use the Codes&lt;/h2&gt;
 &lt;p&gt;In GTK you enter Unicode characters by pressint &lt;code&gt;Ctrl+Shift+U&lt;/code&gt;, then typing the character code, then pressing &lt;code&gt;Space&lt;/code&gt; or &lt;code&gt;Enter&lt;/code&gt;.
