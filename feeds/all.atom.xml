@@ -1,5 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Some Personal Notes</title><link href="https://black-puppydog.github.io/" rel="alternate"></link><link href="https://black-puppydog.github.io/feeds/all.atom.xml" rel="self"></link><id>https://black-puppydog.github.io/</id><updated>2015-04-26T00:00:00+02:00</updated><entry><title>Typing French Characters in GTK Applications</title><link href="https://black-puppydog.github.io/french-characters.html" rel="alternate"></link><updated>2015-04-26T00:00:00+02:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-04-26:french-characters.html</id><summary type="html">&lt;p&gt;Since I will need to write some French accents every now and again in the future but I ususally work on a UK or US keyboard layout I collected these Unicode codes.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Some Personal Notes</title><link href="https://black-puppydog.github.io/" rel="alternate"></link><link href="https://black-puppydog.github.io/feeds/all.atom.xml" rel="self"></link><id>https://black-puppydog.github.io/</id><updated>2015-04-26T00:00:00+02:00</updated><entry><title>Das Problem ist der Wütende Mob!</title><link href="https://black-puppydog.github.io/altenbockum-erklaert-den-mob-zum-problem.html" rel="alternate"></link><updated>2015-04-26T00:00:00+02:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-04-26:altenbockum-erklaert-den-mob-zum-problem.html</id><summary type="html">&lt;p&gt;Für die, dies es nicht mitbekommen haben: &lt;a href="http://www.spiegel.de/politik/deutschland/ueberwachung-neue-spionageaffaere-erschuettert-bnd-a-1030191.html"&gt;Spiegel Online&lt;/a&gt; berichtete am Donnerstag darüber, dass der BND jahrelang &lt;em&gt;wissentlich&lt;/em&gt; Selektoren der NSA verheimlicht hat, die klar gegen europäische und deutsche Ziele gerichtet waren, und nicht etwa gegen Terroristen oder dergleichen.&lt;/p&gt;
+&lt;p&gt;In der &lt;a href="http://www.faz.net/aktuell/politik/kommentar-der-bnd-im-circus-maximus-13557254.html"&gt;FAZ&lt;/a&gt; erklärt Japser von Altenbockum, was das eigentliche Problem derzeit ist:
+Es ist nicht etwa das Auspionieren von Europäischen und Deutschen Unternehmen, Politikern und (IMHO stets unterbewertet) Privatpersonen, nein.
+Genau genommen gibt es eigentlich gar kein Problem. 
+Der BND hat sich nur im falschen Augenblick einen Fauxpas geleistet, indem er der Bundesregierung nichts von den Selektoren gesagt hat, die klar nichts mit Terrorismus zu tun hatten.
+Das macht den Mob - die "aufgepeitschte Öffentlichkeit" - wütend, das war "eine Dummheit".&lt;/p&gt;
+&lt;p&gt;Dieser Artikel macht mich sauer, und das gleich aus mehreren Gründen.
+Gleich zu Beginn stellt Altenbockum den Strohmann auf, die NSA sei "die größte Bedrohung der deutschen Sicherheit" und schießt diesen dann folgermaßen nieder:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Ohne diese Zusammenarbeit wäre die Sicherheit Deutschlands gefährdet. Da das so ist, haben alle diese Angriffe für die Arbeit des BND untergeordnete Bedeutung. Viel wichtiger sind: Russland, China, Terror. Ein Versäumnis in dieser Richtung wäre weit gravierender als alle bisher bekannt gewordenen Versäumnisse des BND an der Seite der NSA zusammengenommen. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Wohlgemerkt schreibt er &lt;em&gt;nicht&lt;/em&gt;, dass das schon alles seine Ordnung gehabt hätte.
+Sondern er sagt im Grunde "aber wir können uns im Kampf gegen den Terror (und Russland und China) von solchen Kleinlichkeiten wie geltendem Recht nicht aufhalten lassen."&lt;/p&gt;
+&lt;p&gt;Das alleine wäre mir schon zuwider, denn mit desem Statement hätte Herr von Altenbockum auch einfach Regierungssprecher werden können.
+Aber dann macht er sich noch nicht einmal die Mühe, das vernünftig auszuformulieren.
+"Russland, China, Terror."
+Bloß nicht zu kompliziert, der Mob braucht schließlich ein klar definiertes Feindbild.
+Alles andere verwirrt den Mob nur, könnte ihn gar aufpeitschen.
+Daher auch gleich noch eine Ansage dazu, was von den bisherigen Veröffentlichungen zu halten ist:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Alle sensationsheischenden Einblicke in die Welt von BND und NSA mussten zudem – nicht ganz so öffentlichkeitswirksam – korrigiert werden. &lt;a href="http://www.faz.net/aktuell/politik/harte-bretter/ueberwachungsstaat-deutschland-in-der-snowden-falle-13459674.html"&gt;Manche „Massenüberwachung“ entpuppte sich als pure Chimäre&lt;/a&gt;, ohne dass deren Enthüller das bis heute wahrhaben wollten. Auch im jetzt wieder aufgewärmten Fall ist das so.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Oh? Ist das so? Da hängt ein Link dran, das muss ja dann eine Quelle sein, andere Links gibt es im ganzen Kommentar nicht.
+Nun, der Link führt zu einem weiteren Kommentar von von Altenbockum, vom 5.3.2015.
+In diesem Kommentar stellt er fest, dass im Grunde alles, was Greenwald und andere Journalisten veröffentlichten, Unfug ist.
+Eine Quelle dafür gibt er nur in einem Fall: den Gemalto-Hack.
+Als Hinweis dafür, dass es sich hierbei ja nur um einen Plan gehandlet haben könnte und nicht etwa um eine vollzogene Attacke, verweist er auf den "Blogger Rolf Weber".
+Dieser schrieb im Wesentlichen "seht her, die interessieren sich ja vor allem für SIMs aus dem Iran, Pakistan etc, also alles kein Problem" und berief sich dabei auf &lt;a href="https://firstlook.org/theintercept/document/2015/02/19/imsis-identified-ki-data-network-providers-jan10-mar10-trial/"&gt;eine Folie des GHCQ&lt;/a&gt; (Kopie &lt;a href="https://black-puppydog.github.io/images/2015-04-26_gemalto_2.pdf"&gt;hier&lt;/a&gt;).
+Das als Ausrede gelten zu lassen ist schon ein starkes Stück, vor allem, wenn man sich eine weitere - ebenfalls vom Intercept veröffentlichte - &lt;a href="https://firstlook.org/theintercept/document/2015/02/19/cne-access-core-mobile-networks-2/"&gt;Folie&lt;/a&gt; ( &lt;a href="https://black-puppydog.github.io/images/2015-04-26_gemalto.pdf"&gt;Kopie&lt;/a&gt;) ansieht:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;GEMALTO - successfully implanted several machines and
+believe we have their entire network - TDSD are working the
+data&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;"Wir haben das gesamte Netz."
+Nur gut, dass wir uns darauf verlassen können, dass sie nicht hinter uns her sind, schließlich ist Gemalto der weltweit größte Hersteller von SIM-Karten.
+Wann und warum die anderen angesprochenen Enthüllungen - Prism und Boundless Informant werden als Beipsiele gegeben - so nicht stimmen, wird gar nicht weiter belegt. Muss man ja auch nicht, das hier reicht da schon:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Falsch war auch, dass die NSA direkten Zugang zu den Servern amerikanischer Internetkonzerne wie Apple oder Google hatte („Prism“)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Noch Fragen? Keine? Gut, dann jetzt zurück zum Kommentar von letztem Freitag, 24.4.
+Nachdem Altenbockum mit Hinweis auf seine eigenen, größtenteils unbelegten Aussagen, klargestellt hat, dass es kein Problem gibt, kann man dann ja der Linkspartei "politische Geschmacklosigkeit" und Antiamerikanismus vorzuwerfen.&lt;/p&gt;
+&lt;p&gt;Im letzten Absatz macht von Altenbockum dann noch einmal klar, was genau man dem BND vorwerfen sollte und was nicht, und nebenbei wiederholt er noch einmal wie gefährlich die Lage für Deutschland doch ist:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Das Kanzleramt über faule NSA-Eier nicht zu informieren, mag angesichts der wahren Bedrohungslage Deutschlands verständlich gewesen sein. Doch allein, dass die SPD die Gelegenheit nutzt, die Kanzlerin zu schwächen, kann der BND-Spitze schon aus Eigeninteresse nicht gleichgültig sein. Angesichts der politischen Bedrohungslage des Kanzleramts war es deshalb eine Dummheit.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Soso, es war mag also verständlich gewesen sein, die Regierung &lt;em&gt;nicht&lt;/em&gt; auf klar gegen Deutsche und Europäische Interessen gerichtete Abfragen der NSA hinzuweisen und ihr damit die Basis zu einer echten Entscheidungsgrundlage zu nehmen?
+Da muss man doch sogleich an einen Satz aus dem Absatz direkt darüber denken:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Ein Geheimdienst, der sich gegen den eigenen Staat richtet und der sich dessen Kontrolle entzieht, ist ein Risiko für jede freie Gesellschaft.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Wenn unser eigener Nachrichtendienst es nicht für berichtenswert hält, dass unsere vermeintlich Verbündeten ihn zu Spionagezwecken &lt;em&gt;gegen uns selber&lt;/em&gt; missbrauchen, dann haben wir ein großes Problem. 
+Journalisten wie Herr von Altenbockum, die in ihrem Glauben an das Wohlwollen der USA und unserer eigenen Dienste so aufgehen, dass sie deren Parolen (Bedrohungslage! Bedrohliche Bedrohungslage!) und Feindbilder (China! Russland! Terror!) dermaßen unhinterfragt und überspitzt wiederholen, sind ebenfalls Teil des Problems.&lt;/p&gt;
+&lt;p&gt;Ach und der Mob ist auch nicht wütend. Das ist Zorn.&lt;/p&gt;</summary><category term="NSA"></category><category term="BND"></category><category term="FAZ"></category></entry><entry><title>Typing French Characters in GTK Applications</title><link href="https://black-puppydog.github.io/french-characters.html" rel="alternate"></link><updated>2015-04-26T00:00:00+02:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-04-26:french-characters.html</id><summary type="html">&lt;p&gt;Since I will need to write some French accents every now and again in the future but I ususally work on a UK or US keyboard layout I collected these Unicode codes.
 According to &lt;a href="https://en.wikipedia.org/wiki/French_orthography"&gt;Wikipedia&lt;/a&gt; this should be enough to type any character you encounter in French.
 I wrote everything on a piece of paper, then immediately spilled a cup of coffee over it.
 So I thought a blog post was in order, both for my own reference and for others who might need it.&lt;/p&gt;
