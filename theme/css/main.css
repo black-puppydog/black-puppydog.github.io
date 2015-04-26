@@ -80,6 +80,10 @@ ul {
 ol {
   list-style: outside decimal;
   margin: 1em 0 1.5em 1.5em; }
+ 
+td {
+    padding: 0 1em;
+}
 
 .post-info {
   font-size: 0.8em;
@@ -117,7 +121,7 @@ pre {
   overflow: auto; }
 
 code, pre {
-  font-family: 'PT Mono', sans-serif; }
+  font-family: 'PT Mono', monospace, sans-serif; }
 
 blockquote {
   margin: 20px;

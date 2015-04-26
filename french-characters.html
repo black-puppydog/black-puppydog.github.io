@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Daan Wynen" />
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:title" content="Typing French Characters in GTK Applications"/>
+    <meta property="og:url" content="https://black-puppydog.github.io/french-characters.html"/>
+    <meta property="og:site_name" content="Some Personal Notes"/>
+    <meta property="og:type" content="article"/>
+
+    <link rel="canonical" href="https://black-puppydog.github.io/french-characters.html" />
+
+    <title>Typing French Characters in GTK Applications | Some Personal Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/bootstrap-combined.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/main.css" />
+    <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Atom Feed" />
+    <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes RSS Feed" />
+
+    <script type="text/javascript">var switchTo5x=true;</script>
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher: "",
+            doNotHash: false,
+            doNotCopy: false,
+            hashAddressBar: false
+        });
+    </script>
+</head>
+
+<body id="index">
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <header id="banner" >
+                <h1>
+                    <a href="https://black-puppydog.github.io/">Some Personal Notes </a>
+                </h1>
+                <nav class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav">
+                            <li ><a href="https://black-puppydog.github.io/category/programming.html">Programming</a></li>
+                            <li class="active"><a href="https://black-puppydog.github.io/category/reference.html">Reference</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/war-on-democracy.html">War on Democracy</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/web.html">Web</a></li>
+                        </ul>
+
+                    </div>
+                </nav>
+            </header><!-- /#banner -->
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <div class="row-fluid">
+<div class="span10 offset1">
+  <section>
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="https://black-puppydog.github.io/french-characters.html" rel="bookmark"
+             title="Permalink to Typing French Characters in GTK Applications">Typing French Characters in GTK Applications</a></h1>
+      </header>
+      <div class="entry-content">
+<footer class="post-info">
+    <address class="vcard author">
+        by <a class="url fn" href="https://black-puppydog.github.io/author/daan-wynen.html">Daan Wynen</a>
+    </address>
+
+    in <a href="https://black-puppydog.github.io/category/reference.html">Reference</a>
+
+    on 2015-04-26
+
+        |
+        tags:         <a href="https://black-puppydog.github.io/tag/unicode.html">unicode</a>
+        <a href="https://black-puppydog.github.io/tag/gtk.html">GTK</a>
+        <a href="https://black-puppydog.github.io/tag/linux.html">linux</a>
+        <a href="https://black-puppydog.github.io/tag/ubuntu.html">ubuntu</a>
+
+
+
+    
+</footer><!-- /.post-info -->
+
+        <p>Since I will need to write some French accents every now and again in the Future but I ususally work on a UK or US keyboard layout I collected these Unicode codes.
+According to <a href="https://en.wikipedia.org/wiki/French_orthography">Wikipedia</a> this should be enough to type any character you encounter in French.
+I wrote everything on a piece of paper, then immediately spilled a cup of coffee over it.
+So I thought a blog post was in order, both for my own reference and for others who might need it.</p>
+<p>These codes work in any <a href="http://www.gtk.org/">GTK</a> application, which luckily includes <a href="https://www.mozilla.org/en-US/firefox/desktop/">Firefox</a>, <a href="https://www.mozilla.org/en-US/thunderbird">Thunderbird</a> and <a href="https://pidgin.im/">Pidgin</a>, i.e. just about the only two applications where I might care to use accents and all that stuff. :)
+The only other application I really need is a terminal, and I use the GNome terminal emulator for that, which also uses GTK.
+So between these applications I think 99% of my computer time is covered and I won't bother to find out how to properly type these accents in any other way :)</p>
+<h2>How to use the Codes</h2>
+<p>In GTK you enter Unicode characters by pressint <code>Ctrl+Shift+U</code>, then typing the character code, then pressing <code>Space</code> or <code>Enter</code>.
+Alternatively you can hold the <code>Ctrl+Shift+U</code> combination while typing the code and then just release it.</p>
+<h2>Combining Codes</h2>
+<p>Unicode allows the composition of characters.
+So for the most cases you can actually get away with a few codes:
+To use these, you first type whichever character you want to decorate (say a 'U') and then enter the code (say 327) afterwards (i.e. with the cursor placed <em>after</em> the 'U') and voilà, you get 'U̧'.
+Helpful, I know :)</p>
+<p>So here are the combining characters for accents and the diaeresis (aka umlaut)</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Combining Symbol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>300</td>
+<td>Grave Accent</td>
+</tr>
+<tr>
+<td>301</td>
+<td>Acute Accent</td>
+</tr>
+<tr>
+<td>302</td>
+<td>Cirsumflex Accent</td>
+</tr>
+<tr>
+<td>308</td>
+<td>Diaerisis</td>
+</tr>
+<tr>
+<td>327</td>
+<td>Cedilla</td>
+</tr>
+</tbody>
+</table>
+<h2>Ligatures: Æ and Œ</h2>
+<p>These are not combinations of symbols, so you need to know their codes.</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Symbol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>e6</td>
+<td>æ</td>
+</tr>
+<tr>
+<td>c6</td>
+<td>Æ</td>
+</tr>
+<tr>
+<td>153</td>
+<td>œ</td>
+</tr>
+<tr>
+<td>152</td>
+<td>Œ</td>
+</tr>
+</tbody>
+</table>
+<h2>Shorter Codes</h2>
+<p>Some symbols (think 'ç', 'è', 'à') are more common than others, so you might want to remember these (shorter) codes separately.
+The <a href="https://fr.wikipedia.org/wiki/Table_des_caract%C3%A8res_Unicode_(0000-0FFF)">Unicode tables</a> for characters are loooooong so I collected the symbols used in French into this shorter table:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>a</th>
+<th>E</th>
+<th>e</th>
+<th>I</th>
+<th>i</th>
+<th>O</th>
+<th>o</th>
+<th>U</th>
+<th>u</th>
+<th>Y</th>
+<th>y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acute</td>
+<td></td>
+<td></td>
+<td>c9</td>
+<td>e9</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Grave</td>
+<td>c1</td>
+<td>e1</td>
+<td>c8</td>
+<td>e8</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>d9</td>
+<td>f9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Circumflex</td>
+<td>c2</td>
+<td>e2</td>
+<td>ca</td>
+<td>ea</td>
+<td>ce</td>
+<td>ee</td>
+<td>d4</td>
+<td>f4</td>
+<td>db</td>
+<td>fb</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Diaeresis</td>
+<td></td>
+<td></td>
+<td>cb</td>
+<td>eb</td>
+<td>cf</td>
+<td>ef</td>
+<td></td>
+<td></td>
+<td>dc</td>
+<td>fc</td>
+<td>178</td>
+<td>ff</td>
+</tr>
+</tbody>
+</table>
+<p>Or if you just came here to copy/paste a symbol, here you go:</p>
+<table>
+<thead>
+<tr>
+<th>Codes</th>
+<th></th>
+<th align="right">Symbols</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c9</td>
+<td>e9</td>
+<td align="right">É é</td>
+</tr>
+<tr>
+<td>e7</td>
+<td>c7</td>
+<td align="right">ç Ç</td>
+</tr>
+<tr>
+<td>c1</td>
+<td>e1</td>
+<td align="right">Á á</td>
+</tr>
+<tr>
+<td>c8</td>
+<td>e8</td>
+<td align="right">È è</td>
+</tr>
+<tr>
+<td>d9</td>
+<td>f9</td>
+<td align="right">Ù ù</td>
+</tr>
+<tr>
+<td>c2</td>
+<td>e2</td>
+<td align="right">Â â</td>
+</tr>
+<tr>
+<td>ca</td>
+<td>ea</td>
+<td align="right">Ê ê</td>
+</tr>
+<tr>
+<td>ce</td>
+<td>ee</td>
+<td align="right">Î î</td>
+</tr>
+<tr>
+<td>d4</td>
+<td>f4</td>
+<td align="right">Ô ô</td>
+</tr>
+<tr>
+<td>db</td>
+<td>fb</td>
+<td align="right">Û û</td>
+</tr>
+<tr>
+<td>cb</td>
+<td>eb</td>
+<td align="right">Ë ë</td>
+</tr>
+<tr>
+<td>cf</td>
+<td>ef</td>
+<td align="right">Ï ï</td>
+</tr>
+<tr>
+<td>dc</td>
+<td>fc</td>
+<td align="right">Ü ü</td>
+</tr>
+<tr>
+<td>178</td>
+<td>ff</td>
+<td align="right">Ÿ ÿ</td>
+</tr>
+</tbody>
+</table>
+
+      </div><!-- /.entry-content -->
+
+    </article>
+  </section>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="site-footer">
+        <div class="row-fluid">
+            <div class="span10 offset1">
+                <address>
+                    <p>
+                        This blog is proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                    </p>
+                    <p>
+                        <a href="http://github.com/jsliang/pelican-fresh/">Fresh</a> is a responsive theme designed by <a href="http://jsliang.com/">jsliang</a> and <a href="https://github.com/jsliang/pelican-fresh/graphs/contributors">contributors</a>.
+                        Special thanks to <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> and <a href="http://getbootstrap.com/">Twitter Bootstrap</a>.
+                    </p>
+                </address>
+            </div>
+        </div>
+    </footer>
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
