@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Some Personal Notes</title><link href="https://black-puppydog.github.io/" rel="alternate"></link><link href="https://black-puppydog.github.io/feeds/web.atom.xml" rel="self"></link><id>https://black-puppydog.github.io/</id><updated>2015-02-17T15:00:00+01:00</updated><entry><title>Google shows Ethymology for words</title><link href="https://black-puppydog.github.io/google-shows-ethymology-for-words.html" rel="alternate"></link><updated>2015-02-17T15:00:00+01:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-02-17:google-shows-ethymology-for-words.html</id><summary type="html">&lt;p&gt;This may be ancient but I only really noticed this now.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Some Personal Notes</title><link href="https://black-puppydog.github.io/" rel="alternate"></link><link href="https://black-puppydog.github.io/feeds/web.atom.xml" rel="self"></link><id>https://black-puppydog.github.io/</id><updated>2016-02-03T00:00:00+01:00</updated><entry><title>Why Facebook Keeps Switching You to "Top Stories"</title><link href="https://black-puppydog.github.io/why-facebook-keeps-switching-you-to-top-stories.html" rel="alternate"></link><updated>2016-02-03T00:00:00+01:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2016-02-03:why-facebook-keeps-switching-you-to-top-stories.html</id><summary type="html">&lt;p&gt;&lt;strong&gt;tl;dr&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Facebook earns money from you being on their crappy ranked "newsfeed".
+It allows them to pressure businesses and artists into paying for your
+otherwise free attention.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Today I fell for facebook's "Top Stories" again.
+After scrolling through some pages of posts I realized I am seeing old and random stuff and, sure enough, facebook had decided to switch me back from "Most Recent" to "Top Stories" &lt;em&gt;yet again&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Already knowing the answer I decided nevertheless to search for a solution this time around.
+Of course, I am not the only one who hates this "feature" and so the facebook support forums are full of posts like this one:&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.facebook.com/help/community/search/?query=top+stories"&gt;How do I stop Facebook from changing my preferences to top stories?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;No answer here of course. But then again the quesition is not the right one.
+This one is much closer to the heart of the issue:&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.facebook.com/help/community/question/?id=786826244683755"&gt;Why does my news feed keep changing to Top Stories?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Now, the facebook support pages aren't exactly known for their in-depth discussions of technical and business issues, so the "answers" in that thread are not exactly help- or insightful.
+The actualy answer boils down to this:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;By controlling what you see, facebook is able to sell your attention to advertisers.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Their business model these days goes a bit like this:
+if you start a new business, blog, podcast or whatever else you'll quickly gain traction and followers on facebook.
+Your posts will propagate quickly through the social network, be seen and shared and it will feel great and potentially earn you money.
+But then, when facebook thinks that they have become an essential part of your business model, that you depend on the likes and shares for whatever you are doing, then you will have to pay for actually getting your content to your audience.&lt;/p&gt;
+&lt;p&gt;How does that work? "Top Stories", that's how.
+Imagine (or remember) a facebook as it was before top stories were introduced.
+You would see exactly everything that the people and pages you follow had posted, in chronoligical order.
+That means that a pot would get seen by people if and only if it was shared and reshared by enough people.&lt;/p&gt;
+&lt;p&gt;With top stories enabled on (supposedly) the majority of accounts, this does not hold any longer.
+Even if your post is brilliant and everyone who sees it shares it that does not mean anything if facebook does not &lt;em&gt;show&lt;/em&gt; it to people because their ranking algorithm decided it is not "interesting" enough.
+Or because you haven't paid your monthly fee...
+So, not so many shares, even fewer reshares, and so on.
+Your post becomes irrelevant.
+But then again, you could pay 10 or 20 bucks to change it back to the way it was for a while, couldn't you?
+If that reminds you of a classic mob shakedown, that's not by accident.&lt;/p&gt;
+&lt;p&gt;So facebook has a strong incentive to have as many people use "Top Stories" as possible at any given time.
+What you see is not really tailored to what they believe you want to see. 
+It is actually just a way for facebook to use you to pressure others into paying for your attention.&lt;/p&gt;</summary><category term="web"></category><category term="facebook"></category></entry><entry><title>Google shows Ethymology for words</title><link href="https://black-puppydog.github.io/google-shows-ethymology-for-words.html" rel="alternate"></link><updated>2015-02-17T15:00:00+01:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2015-02-17:google-shows-ethymology-for-words.html</id><summary type="html">&lt;p&gt;This may be ancient but I only really noticed this now.&lt;/p&gt;
 &lt;p&gt;&lt;img alt="This is something I have been waiting for for a while" src="https://black-puppydog.github.io/images/2015-02-17_google_ethymology.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Note the diagram!
 Another field where Google beats the community.
