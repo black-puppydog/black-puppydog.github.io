@@ -8,7 +8,7 @@ Try starting out from &lt;a href="https://askubuntu.com/questions/81370/how-to-c
 &lt;p&gt;Now, when I wanted to replicate that old setup, I found something much simpler instead: 
 creating a modeline in &lt;code&gt;xrandr&lt;/code&gt; and manually assigning it to the screen at runtime. 
 The idea came from &lt;a href="4"&gt;AskUbuntu&lt;/a&gt; and I found the matching modeline &lt;a href="3"&gt;here&lt;/a&gt; (link in German) where someone has a more or less identical screen.
-I was lucky enough to find the modeline there, since otherwise I would have to generate one by hand or with this generator for example.
+I was lucky enough to find the modeline there, since otherwise I would have to generate one by hand or with &lt;a href="5"&gt;this generator&lt;/a&gt; for example.
 Like this, it "just worked", as far as "just working" goes when you're setting your own modelines...
 The result is this little script that I put into &lt;code&gt;~/bin&lt;/code&gt; and call whenever I want to connect that screen:&lt;/p&gt;
 &lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
