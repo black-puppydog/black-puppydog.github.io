@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Daan Wynen" />
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:title" content="Setting a Custom Modeline on a screen with a broken EDID"/>
+    <meta property="og:url" content="https://black-puppydog.github.io/setting-a-custom-modeline-on-a-screen-with-a-broken-edid.html"/>
+    <meta property="og:site_name" content="Some Personal Notes"/>
+    <meta property="og:type" content="article"/>
+
+    <link rel="canonical" href="https://black-puppydog.github.io/setting-a-custom-modeline-on-a-screen-with-a-broken-edid.html" />
+
+    <title>Setting a Custom Modeline on a screen with a broken EDID | Some Personal Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/bootstrap-combined.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/main.css" />
+    <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Atom Feed" />
+    <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes RSS Feed" />
+
+    <script type="text/javascript">var switchTo5x=true;</script>
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher: "",
+            doNotHash: false,
+            doNotCopy: false,
+            hashAddressBar: false
+        });
+    </script>
+</head>
+
+<body id="index">
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <header id="banner" >
+                <h1>
+                    <a href="https://black-puppydog.github.io/">Some Personal Notes </a>
+                </h1>
+                <nav class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav">
+                            <li class="active"><a href="https://black-puppydog.github.io/category/linux.html">Linux</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/programming.html">Programming</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/reference.html">Reference</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/war-on-democracy.html">War on Democracy</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/web.html">Web</a></li>
+                        </ul>
+
+                    </div>
+                </nav>
+            </header><!-- /#banner -->
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <div class="row-fluid">
+<div class="span10 offset1">
+  <section>
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="https://black-puppydog.github.io/setting-a-custom-modeline-on-a-screen-with-a-broken-edid.html" rel="bookmark"
+             title="Permalink to Setting a Custom Modeline on a screen with a broken EDID">Setting a Custom Modeline on a screen with a broken EDID</a></h1>
+      </header>
+      <div class="entry-content">
+<footer class="post-info">
+    <address class="vcard author">
+        by <a class="url fn" href="https://black-puppydog.github.io/author/daan-wynen.html">Daan Wynen</a>
+    </address>
+
+    in <a href="https://black-puppydog.github.io/category/linux.html">Linux</a>
+
+    on 2016-08-15
+
+        |
+        tags:         <a href="https://black-puppydog.github.io/tag/linux.html">linux</a>
+        <a href="https://black-puppydog.github.io/tag/xorg.html">xorg</a>
+        <a href="https://black-puppydog.github.io/tag/modeline.html">modeline</a>
+        <a href="https://black-puppydog.github.io/tag/edid.html">edid</a>
+        <a href="https://black-puppydog.github.io/tag/xrandr.html">xrandr</a>
+
+
+
+    
+</footer><!-- /.post-info -->
+
+        <p>This is a note to my future self as much as to anyone else.</p>
+<p>I own an old Yuraku MB24WKH screen which I never got to work via its DVI connector, but the VGA works just fine.
+It is for reading text, not gaming or image processing, so that's fine by me.
+Problem is, the internal ROM of the screen seems to be broken, at least it does not properly communicate the available modes to xorg in its <a href="1">EDID</a></p>
+<p>I remember that some years ago I had a setup with a custom xorg.conf, involving an EDID file I had to extract and manually hex-edit. 
+Try starting out from <a href="https://askubuntu.com/questions/81370/how-to-create-extract-the-edid-for-from-a-monitor">here</a> if you're into that kind of thing.</p>
+<p>Now, when I wanted to replicate that old setup, I found something much simpler instead: 
+creating a modeline in <code>xrandr</code> and manually assigning it to the screen at runtime. 
+The idea came from <a href="4">AskUbuntu</a> and I found the matching modeline <a href="3">here</a> (link in German) where someone has a more or less identical screen.
+I was lucky enough to find the modeline there, since otherwise I would have to generate one by hand or with this generator for example.
+Like this, it "just worked", as far as "just working" goes when you're setting your own modelines...
+The result is this little script that I put into <code>~/bin</code> and call whenever I want to connect that screen:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#! /bin/sh</span>
+
+<span class="c"># this adds a mode to my broken yuraku mb24wkh screen to use it in full HD mode.</span>
+<span class="c"># this is necessary since the EDID is broken and</span>
+<span class="c"># it doesn&#39;t communicate the available modes correctly.</span>
+
+xrandr --newmode <span class="s2">&quot;1920x1200&quot;</span> 154.000 <span class="m">1920</span> <span class="m">1968</span> <span class="m">2000</span> <span class="m">2080</span> <span class="m">1200</span> <span class="m">1203</span> <span class="m">1209</span> 1235
+xrandr --addmode VGA-1 1920x1200
+
+<span class="c"># I&#39;m lazy. If I call this script I probably want the screen to be attached anyway</span>
+xrandr --output VGA-1 --right-of LVDS-1
+xrandr --output VGA-1 --mode <span class="s2">&quot;1920x1200&quot;</span>
+</pre></div>
+</td></tr></table>
+
+<p>For reference and to avoid a "dead link, info gone" scenario, I copy that other dude's screen info from his <a href="3">original post</a>:</p>
+<div class="highlight"><pre>Monitor
+  Model name............... MB24W
+  Manufacturer............. NTS
+  Plug and Play ID......... NTS0000
+  Serial number............ 
+  Manufacture date......... 2007, ISO week 31
+  -------------------------
+  EDID revision............ 1.3
+  Input signal type........ Digital
+  Color bit depth.......... Undefined
+  Display type............. RGB color
+  Screen size.............. 510 x 320 mm (23.7&quot;)
+  Power management......... Active off/sleep
+  Extension blocs.......... 1 (CEA-EXT)
+  -------------------------
+  DDC/CI................... Supported
+  MCCS revison............. 2.0
+  Display technology....... TFT
+  Controller............... Novatek 0x0
+  Firmware revision........ 1.0
+  Active power on time..... Not supported
+  Current frequency........ 16711.68kHz, 0.00Hz
+
+
+Color characteristics
+  Default color space...... Non-sRGB
+  Display gamma............ 2.20
+  Red chromaticity......... Rx 0.653 - Ry 0.337
+  Green chromaticity....... Gx 0.295 - Gy 0.607
+  Blue chromaticity........ Bx 0.144 - By 0.075
+  White point (default).... Wx 0.313 - Wy 0.329
+  Additional descriptors... None
+
+
+Timing characteristics
+  Horizontal scan range.... 30-74kHz
+  Vertical scan range...... 50-61Hz
+  Video bandwidth.......... 160MHz
+  CVT standard............. Not supported
+  GTF standard............. Not supported
+  Additional descriptors... None
+  Preferred timing......... Yes
+  Native/preferred timing.. 1920x1200p at 60Hz (16:10)
+    Modeline............... &quot;1920x1200&quot; 154.000 1920 1968 2000 2080 1200
+1203 1209 1235 +hsync -vsync
+
+
+Standard timings supported
+     640 x  480p at  60Hz - IBM VGA
+     800 x  600p at  56Hz - VESA
+     800 x  600p at  60Hz - VESA
+    1024 x  768p at  60Hz - VESA
+    1280 x  800p at  60Hz - VESA STD
+    1280 x 1024p at  60Hz - VESA STD
+    1440 x  900p at  60Hz - VESA STD
+    1600 x 1200p at  60Hz - VESA STD
+    1680 x 1050p at  60Hz - VESA STD
+    1360 x  765p at  60Hz - VESA STD
+    1280 x  960p at  60Hz - VESA STD
+    1152 x  864p at  60Hz - VESA STD
+
+
+EIA/CEA-861 Information
+  Revision number.......... 3
+  DTV underscan............ Not supported
+  Basic audio.............. Not supported
+  YCbCr 4:4:4.............. Not supported
+  YCbCr 4:2:2.............. Not supported
+  YCbCr 4:2:2.............. Not supported
+  Native formats........... 5
+  Detailed timing #1....... 1920x1080p at 60Hz (16:9)
+    Modeline............... &quot;1920x1080&quot; 148.500 1920 2008 2052 2200 1080
+1084 1089 1125 +hsync +vsync
+  Detailed timing #2....... 1920x1080i at 60Hz (16:9)
+    Modeline............... &quot;1920x1080&quot; 74.250 1920 2008 2052 2200 1080 1084
+1094 1124 interlace +hsync +vsync
+  Detailed timing #3....... 1280x720p at 60Hz (16:9)
+    Modeline............... &quot;1280x720&quot; 74.250 1280 1390 1430 1650 720 725
+730 750 +hsync +vsync
+  Detailed timing #4....... 720x576p at 50Hz (16:9)
+    Modeline............... &quot;720x576&quot; 27.000 720 732 796 864 576 581 586 625
+-hsync -vsync
+  Detailed timing #5....... 720x480p at 60Hz (16:9)
+    Modeline............... &quot;720x480&quot; 27.000 720 736 798 858 480 489 495 525
+-hsync -vsync
+
+
+CE timings supported
+    1920 x 1080p at  60Hz - HDTV (16:9, 1:1) [Native]
+    1920 x 1080i at  60Hz - HDTV (16:9, 1:1) [Native]
+    1280 x  720p at  60Hz - HDTV (16:9, 1:1) [Native]
+     720 x  576p at  50Hz - EDTV (16:9, 64:45) [Native]
+     720 x  480p at  60Hz - EDTV (16:9, 32:27) [Native]
+    NB: NTSC refresh rate = (Hz*1000)/1001
+
+
+Report information
+  Date generated........... 11/19/2008
+  Software revision........ 2.1.0.725
+  Raw data.................
+00FFFFFFFFFFFF003A930000000000001F110103803320782A5AD5A7564B9B24
+  .........................
+135054230800810081809500A940B3008BC081407140283C80A070B023403020
+  .........................
+360006442100001A000000FC004D423234570A20202020202020000000FD0032
+  .........................
+3D1E4A10000A202020202020000000FF000A202020202020202020202020018C
+  .........................
+02030A05459085849283023A801871382D40582C4500A05A0000001E011D8018
+  .........................
+711C1620582C2500A05A0000009E011D007251D01E206E285500A05A0000001E
+  .........................
+8C0AD090204031200C405500C48E210000188C0AD08A20E02D10103E9600A05A
+  .........................
+000000180000000000000000000000000000000000000000000000000000008C
+</pre></div>
+
+      </div><!-- /.entry-content -->
+
+    </article>
+  </section>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="site-footer">
+        <div class="row-fluid">
+            <div class="span10 offset1">
+                <address>
+                    <p>
+                        This blog is proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                    </p>
+                    <p>
+                        <a href="http://github.com/jsliang/pelican-fresh/">Fresh</a> is a responsive theme designed by <a href="http://jsliang.com/">jsliang</a> and <a href="https://github.com/jsliang/pelican-fresh/graphs/contributors">contributors</a>.
+                        Special thanks to <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> and <a href="http://getbootstrap.com/">Twitter Bootstrap</a>.
+                    </p>
+                </address>
+            </div>
+        </div>
+    </footer>
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>

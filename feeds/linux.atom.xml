@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Some Personal Notes</title><link href="https://black-puppydog.github.io/" rel="alternate"></link><link href="https://black-puppydog.github.io/feeds/linux.atom.xml" rel="self"></link><id>https://black-puppydog.github.io/</id><updated>2016-08-15T00:00:00+02:00</updated><entry><title>Setting a Custom Modeline on a screen with a broken EDID</title><link href="https://black-puppydog.github.io/setting-a-custom-modeline-on-a-screen-with-a-broken-edid.html" rel="alternate"></link><updated>2016-08-15T00:00:00+02:00</updated><author><name>Daan Wynen</name></author><id>tag:black-puppydog.github.io,2016-08-15:setting-a-custom-modeline-on-a-screen-with-a-broken-edid.html</id><summary type="html">&lt;p&gt;This is a note to my future self as much as to anyone else.&lt;/p&gt;
+&lt;p&gt;I own an old Yuraku MB24WKH screen which I never got to work via its DVI connector, but the VGA works just fine.
+It is for reading text, not gaming or image processing, so that's fine by me.
+Problem is, the internal ROM of the screen seems to be broken, at least it does not properly communicate the available modes to xorg in its &lt;a href="1"&gt;EDID&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I remember that some years ago I had a setup with a custom xorg.conf, involving an EDID file I had to extract and manually hex-edit. 
+Try starting out from &lt;a href="https://askubuntu.com/questions/81370/how-to-create-extract-the-edid-for-from-a-monitor"&gt;here&lt;/a&gt; if you're into that kind of thing.&lt;/p&gt;
+&lt;p&gt;Now, when I wanted to replicate that old setup, I found something much simpler instead: 
+creating a modeline in &lt;code&gt;xrandr&lt;/code&gt; and manually assigning it to the screen at runtime. 
+The idea came from &lt;a href="4"&gt;AskUbuntu&lt;/a&gt; and I found the matching modeline &lt;a href="3"&gt;here&lt;/a&gt; (link in German) where someone has a more or less identical screen.
+I was lucky enough to find the modeline there, since otherwise I would have to generate one by hand or with this generator for example.
+Like this, it "just worked", as far as "just working" goes when you're setting your own modelines...
+The result is this little script that I put into &lt;code&gt;~/bin&lt;/code&gt; and call whenever I want to connect that screen:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#! /bin/sh&lt;/span&gt;
+
+&lt;span class="c"&gt;# this adds a mode to my broken yuraku mb24wkh screen to use it in full HD mode.&lt;/span&gt;
+&lt;span class="c"&gt;# this is necessary since the EDID is broken and&lt;/span&gt;
+&lt;span class="c"&gt;# it doesn&amp;#39;t communicate the available modes correctly.&lt;/span&gt;
+
+xrandr --newmode &lt;span class="s2"&gt;&amp;quot;1920x1200&amp;quot;&lt;/span&gt; 154.000 &lt;span class="m"&gt;1920&lt;/span&gt; &lt;span class="m"&gt;1968&lt;/span&gt; &lt;span class="m"&gt;2000&lt;/span&gt; &lt;span class="m"&gt;2080&lt;/span&gt; &lt;span class="m"&gt;1200&lt;/span&gt; &lt;span class="m"&gt;1203&lt;/span&gt; &lt;span class="m"&gt;1209&lt;/span&gt; 1235
+xrandr --addmode VGA-1 1920x1200
+
+&lt;span class="c"&gt;# I&amp;#39;m lazy. If I call this script I probably want the screen to be attached anyway&lt;/span&gt;
+xrandr --output VGA-1 --right-of LVDS-1
+xrandr --output VGA-1 --mode &lt;span class="s2"&gt;&amp;quot;1920x1200&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;For reference and to avoid a "dead link, info gone" scenario, I copy that other dude's screen info from his &lt;a href="3"&gt;original post&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;Monitor
+  Model name............... MB24W
+  Manufacturer............. NTS
+  Plug and Play ID......... NTS0000
+  Serial number............ 
+  Manufacture date......... 2007, ISO week 31
+  -------------------------
+  EDID revision............ 1.3
+  Input signal type........ Digital
+  Color bit depth.......... Undefined
+  Display type............. RGB color
+  Screen size.............. 510 x 320 mm (23.7&amp;quot;)
+  Power management......... Active off/sleep
+  Extension blocs.......... 1 (CEA-EXT)
+  -------------------------
+  DDC/CI................... Supported
+  MCCS revison............. 2.0
+  Display technology....... TFT
+  Controller............... Novatek 0x0
+  Firmware revision........ 1.0
+  Active power on time..... Not supported
+  Current frequency........ 16711.68kHz, 0.00Hz
+
+
+Color characteristics
+  Default color space...... Non-sRGB
+  Display gamma............ 2.20
+  Red chromaticity......... Rx 0.653 - Ry 0.337
+  Green chromaticity....... Gx 0.295 - Gy 0.607
+  Blue chromaticity........ Bx 0.144 - By 0.075
+  White point (default).... Wx 0.313 - Wy 0.329
+  Additional descriptors... None
+
+
+Timing characteristics
+  Horizontal scan range.... 30-74kHz
+  Vertical scan range...... 50-61Hz
+  Video bandwidth.......... 160MHz
+  CVT standard............. Not supported
+  GTF standard............. Not supported
+  Additional descriptors... None
+  Preferred timing......... Yes
+  Native/preferred timing.. 1920x1200p at 60Hz (16:10)
+    Modeline............... &amp;quot;1920x1200&amp;quot; 154.000 1920 1968 2000 2080 1200
+1203 1209 1235 +hsync -vsync
+
+
+Standard timings supported
+     640 x  480p at  60Hz - IBM VGA
+     800 x  600p at  56Hz - VESA
+     800 x  600p at  60Hz - VESA
+    1024 x  768p at  60Hz - VESA
+    1280 x  800p at  60Hz - VESA STD
+    1280 x 1024p at  60Hz - VESA STD
+    1440 x  900p at  60Hz - VESA STD
+    1600 x 1200p at  60Hz - VESA STD
+    1680 x 1050p at  60Hz - VESA STD
+    1360 x  765p at  60Hz - VESA STD
+    1280 x  960p at  60Hz - VESA STD
+    1152 x  864p at  60Hz - VESA STD
+
+
+EIA/CEA-861 Information
+  Revision number.......... 3
+  DTV underscan............ Not supported
+  Basic audio.............. Not supported
+  YCbCr 4:4:4.............. Not supported
+  YCbCr 4:2:2.............. Not supported
+  YCbCr 4:2:2.............. Not supported
+  Native formats........... 5
+  Detailed timing #1....... 1920x1080p at 60Hz (16:9)
+    Modeline............... &amp;quot;1920x1080&amp;quot; 148.500 1920 2008 2052 2200 1080
+1084 1089 1125 +hsync +vsync
+  Detailed timing #2....... 1920x1080i at 60Hz (16:9)
+    Modeline............... &amp;quot;1920x1080&amp;quot; 74.250 1920 2008 2052 2200 1080 1084
+1094 1124 interlace +hsync +vsync
+  Detailed timing #3....... 1280x720p at 60Hz (16:9)
+    Modeline............... &amp;quot;1280x720&amp;quot; 74.250 1280 1390 1430 1650 720 725
+730 750 +hsync +vsync
+  Detailed timing #4....... 720x576p at 50Hz (16:9)
+    Modeline............... &amp;quot;720x576&amp;quot; 27.000 720 732 796 864 576 581 586 625
+-hsync -vsync
+  Detailed timing #5....... 720x480p at 60Hz (16:9)
+    Modeline............... &amp;quot;720x480&amp;quot; 27.000 720 736 798 858 480 489 495 525
+-hsync -vsync
+
+
+CE timings supported
+    1920 x 1080p at  60Hz - HDTV (16:9, 1:1) [Native]
+    1920 x 1080i at  60Hz - HDTV (16:9, 1:1) [Native]
+    1280 x  720p at  60Hz - HDTV (16:9, 1:1) [Native]
+     720 x  576p at  50Hz - EDTV (16:9, 64:45) [Native]
+     720 x  480p at  60Hz - EDTV (16:9, 32:27) [Native]
+    NB: NTSC refresh rate = (Hz*1000)/1001
+
+
+Report information
+  Date generated........... 11/19/2008
+  Software revision........ 2.1.0.725
+  Raw data.................
+00FFFFFFFFFFFF003A930000000000001F110103803320782A5AD5A7564B9B24
+  .........................
+135054230800810081809500A940B3008BC081407140283C80A070B023403020
+  .........................
+360006442100001A000000FC004D423234570A20202020202020000000FD0032
+  .........................
+3D1E4A10000A202020202020000000FF000A202020202020202020202020018C
+  .........................
+02030A05459085849283023A801871382D40582C4500A05A0000001E011D8018
+  .........................
+711C1620582C2500A05A0000009E011D007251D01E206E285500A05A0000001E
+  .........................
+8C0AD090204031200C405500C48E210000188C0AD08A20E02D10103E9600A05A
+  .........................
+000000180000000000000000000000000000000000000000000000000000008C
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="xorg"></category><category term="modeline"></category><category term="edid"></category><category term="xrandr"></category></entry></feed>

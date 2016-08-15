@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Daan Wynen" />
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:title" content="Some links I used to get my FreeBSD up and running."/>
+    <meta property="og:url" content="https://black-puppydog.github.io/drafts/some-links-i-used-to-get-my-freebsd-up-and-running.html"/>
+    <meta property="og:site_name" content="Some Personal Notes"/>
+    <meta property="og:type" content="article"/>
+
+    <link rel="canonical" href="https://black-puppydog.github.io/drafts/some-links-i-used-to-get-my-freebsd-up-and-running.html" />
+
+    <title>Some links I used to get my FreeBSD up and running. | Some Personal Notes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/bootstrap-combined.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="https://black-puppydog.github.io/theme/css/main.css" />
+    <link href="https://black-puppydog.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Some Personal Notes Atom Feed" />
+    <link href="https://black-puppydog.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Some Personal Notes RSS Feed" />
+
+    <script type="text/javascript">var switchTo5x=true;</script>
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher: "",
+            doNotHash: false,
+            doNotCopy: false,
+            hashAddressBar: false
+        });
+    </script>
+</head>
+
+<body id="index">
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <header id="banner" >
+                <h1>
+                    <a href="https://black-puppydog.github.io/">Some Personal Notes </a>
+                </h1>
+                <nav class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav">
+                            <li ><a href="https://black-puppydog.github.io/category/linux.html">Linux</a></li>
+                            <li class="active"><a href="https://black-puppydog.github.io/category/programming.html">Programming</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/reference.html">Reference</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/war-on-democracy.html">War on Democracy</a></li>
+                            <li ><a href="https://black-puppydog.github.io/category/web.html">Web</a></li>
+                        </ul>
+
+                    </div>
+                </nav>
+            </header><!-- /#banner -->
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span10 offset1">
+            <div class="row-fluid">
+<div class="span10 offset1">
+  <section>
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="https://black-puppydog.github.io/drafts/some-links-i-used-to-get-my-freebsd-up-and-running.html" rel="bookmark"
+             title="Permalink to Some links I used to get my FreeBSD up and running.">Some links I used to get my FreeBSD up and running.</a></h1>
+      </header>
+      <div class="entry-content">
+<footer class="post-info">
+    <address class="vcard author">
+        by <a class="url fn" href="https://black-puppydog.github.io/author/daan-wynen.html">Daan Wynen</a>
+    </address>
+
+    in <a href="https://black-puppydog.github.io/category/programming.html">Programming</a>
+
+    on 2016-04-02
+
+        |
+        tags:         <a href="https://black-puppydog.github.io/tag/freebsd.html">freebsd</a>
+        <a href="https://black-puppydog.github.io/tag/i3wm.html">i3wm</a>
+
+
+
+    
+</footer><!-- /.post-info -->
+
+        <p>Note to myself so I don't forget.
+With copies of the parts I need in case the originals go down.</p>
+<h2>Getting X and i3 runnning</h2>
+<p><a href="http://www.daemon-security.com/2014/03/fbsd10desk-0327.html">Taken from here</a></p>
+<div class="highlight"><pre><span class="x">pkg update -f</span>
+
+<span class="err">#</span><span class="x"> install the minimum required Xorg server packages that will allow for the X server to start:</span>
+<span class="x">pkg install -y xorg-server xinit xf86-input-keyboard xf86-input-mouse</span>
+
+<span class="err">#</span><span class="x"> install i3</span>
+<span class="x">pkg install -y i3 i3lock i3status dmenu</span>
+
+<span class="err">#</span><span class="x"> set the default window manager for all users on the system (except root, as root should not be running X):</span>
+<span class="x">foreach dir (`ls /usr/home`)</span>
+<span class="x">echo &quot;/usr/local/bin/i3&quot; &gt;&gt; /usr/home/</span><span class="p">$</span><span class="nv">dir</span><span class="x">/.xinitrc</span>
+<span class="x">chown </span><span class="p">$</span><span class="nv">dir</span><span class="x"> /usr/home/</span><span class="p">$</span><span class="nv">dir</span><span class="x">/.xinitrc</span>
+<span class="x">end</span>
+
+<span class="err">#</span><span class="x"> install the basic failsafe drivers that include VESA to setup a normal VGA desktop:</span>
+<span class="x">pkg install -y xorg-drivers</span>
+
+<span class="err">#</span><span class="x"> add the bare minimum of software I will need.</span>
+<span class="x">pkg install -y rxvt-unicode zsh sudo git chromium tmux gnupg pinentry-curses firefox thunderbird setxkbmap</span>
+
+<span class="err">#</span><span class="x"> When using chromium, the sem module must be loaded in the kernel.</span>
+<span class="err">#</span><span class="x"> The linux compatibility module is also set to load at boot with the following commands:</span>
+<span class="x">echo &#39;sem_load=&quot;YES&quot;&#39; &gt;&gt; /boot/loader.conf</span>
+<span class="x">echo &#39;linux_load=&quot;YES&quot;&#39; &gt;&gt; /boot/loader.conf</span>
+
+<span class="err">#</span><span class="x"> hald and dbus are required for running X, so they must be enabled in rc.conf:</span>
+<span class="x">cat &lt;&lt; EOF &gt;&gt; /etc/rc.conf</span>
+<span class="x">hald_enable=&quot;YES&quot;</span>
+<span class="x">dbus_enable=&quot;YES&quot;</span>
+<span class="x">EOF</span>
+
+<span class="err">#</span><span class="x"> There is a sysctl value that is required when running chromium. The following will add this value to sysctl.conf:</span>
+<span class="x">cat &lt;&lt; EOF &gt;&gt; /etc/sysctl.conf</span>
+<span class="cp">#</span><span class="nf">Required</span><span class="x"> for chrome</span>
+<span class="x">kern.ipc.shm_allow_removed=1</span>
+<span class="x">EOF</span>
+</pre></div>
+
+
+<h2>Enable root ssh Login</h2>
+<p><a href="https://www.unixmen.com/enable-root-login-ssh-freebsd-10/">From here</a></p>
+<p>In <code>vi /etc/ssh/sshd_config</code>, set <code>PermitRootLogin yes</code></p>
+<!--- ## Setting the TTY Font --->
+
+<!---  --->
+
+<!--- It's pretty huge by default... --->
+
+<!--- Solution from [here](https://jasonk2600.wordpress.com/2010/01/07/tip-custom-console-display-on-freebsd) --->
+
+<h2>Add User to sudo Group</h2>
+<p>Going by <a href="https://www.freebsd.org/doc/handbook/users-synopsis.html">the book</a></p>
+<div class="highlight"><pre>pw groupadd sudo
+pw groupmod sudo -M daan
+pw groupmod wheel -M daan
+</pre></div>
+
+      </div><!-- /.entry-content -->
+
+    </article>
+  </section>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="site-footer">
+        <div class="row-fluid">
+            <div class="span10 offset1">
+                <address>
+                    <p>
+                        This blog is proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                    </p>
+                    <p>
+                        <a href="http://github.com/jsliang/pelican-fresh/">Fresh</a> is a responsive theme designed by <a href="http://jsliang.com/">jsliang</a> and <a href="https://github.com/jsliang/pelican-fresh/graphs/contributors">contributors</a>.
+                        Special thanks to <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> and <a href="http://getbootstrap.com/">Twitter Bootstrap</a>.
+                    </p>
+                </address>
+            </div>
+        </div>
+    </footer>
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
